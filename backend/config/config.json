@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "root",
+    "database": "autopark100",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "tu_usuario_mysql",
+    "password": "tu_contraseña_mysql",
+    "database": "nombre_de_tu_base_de_datos_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "tu_usuario_mysql",
+    "password": "tu_contraseña_mysql",
+    "database": "nombre_de_tu_base_de_datos",
+    "host": "tu_host_produccion",
+    "dialect": "mysql"
+  }
+}
