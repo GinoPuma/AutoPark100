@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Usuario extends Model {
     /**
@@ -10,16 +8,51 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Usuario.belongsTo(models.Empresa, { foreignKey: "empresa_id" });
+      Usuario.belongsTo(models.Rol, { foreignKey: "rol_id" });
+      Usuario.hasMany(models.SesionCaja, { foreignKey: "usuario_id" });
     }
   }
-  Usuario.init({
-    nombre: DataTypes.STRING,
-    username: DataTypes.STRING,
-    correo: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Usuario',
-  });
+  Usuario.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      rol_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Rols",
+          key: "rol_id",
+        },
+      },
+      empresa_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Empresas",
+          key: "empresa_id",
+        },
+      },
+      nombre: {
+        type: DataTypes.STRING,
+      },
+      username: {
+        type: DataTypes.STRING,
+      },
+      correo: {
+        type: DataTypes.STRING,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Usuario",
+      tableName: "Usuarios",
+      timestamps: true,
+    }
+  );
   return Usuario;
 };

@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class SesionCaja extends Model {
     /**
@@ -10,18 +8,48 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      SesionCaja.belongsTo(models.Usuario, { foreignKey: "usuario_id" });
+      SesionCaja.hasMany(models.MovimientoCaja, {
+        foreignKey: "sesion_caja_id",
+      });
     }
   }
-  SesionCaja.init({
-    saldo_inicial: DataTypes.DECIMAL,
-    fecha_abierto: DataTypes.DATE,
-    fecha_cierre: DataTypes.DATE,
-    saldo_cierre: DataTypes.DECIMAL,
-    estado: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'SesionCaja',
-  });
+  SesionCaja.init(
+    {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      usuario_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Usuarios",
+          key: "usuario_id",
+        },
+      },
+      saldo_inicial: {
+        type: DataTypes.DECIMAL,
+      },
+      fecha_abierto: {
+        type: DataTypes.DATE,
+      },
+      fecha_cierre: {
+        type: DataTypes.DATE,
+      },
+      saldo_cierre: {
+        type: DataTypes.DECIMAL,
+      },
+      estado: {
+        type: DataTypes.BOOLEAN,
+      },
+    },
+    {
+      sequelize,
+      modelName: "SesionCaja",
+    }
+  );
   return SesionCaja;
 };
