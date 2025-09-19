@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class MovimientoCaja extends Model {
     /**
@@ -11,16 +9,61 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      MovimientoCaja.belongsTo(models.SesionCaja, {
+        foreignKey: "sesion_caja_id",
+      });
+      MovimientoCaja.belongsTo(models.Pago, { foreignKey: "pago_id" });
     }
   }
-  MovimientoCaja.init({
-    fecha_creacion: DataTypes.DATE,
-    tipo: DataTypes.STRING,
-    descripcion: DataTypes.STRING,
-    monto: DataTypes.DECIMAL
-  }, {
-    sequelize,
-    modelName: 'MovimientoCaja',
-  });
+  MovimientoCaja.init(
+    {
+      movimiento_caja_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+
+      sesion_caja_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "SesionesCajas",
+          key: "sesion_caja_id",
+        },
+      },
+
+      pago_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Pagos",
+          key: "pago_id",
+        },
+      },
+
+      fecha_creacion: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+
+      tipo: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+      },
+
+      descripcion: DataTypes.STRING(100),
+      monto: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: "MovimientoCaja",
+      tableName: "MovimientoCajas",
+      timestamps: true,
+    }
+  );
   return MovimientoCaja;
 };

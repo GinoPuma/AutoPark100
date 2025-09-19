@@ -11,6 +11,7 @@ exports.createEmpresa = async (req, res) => {
   }
 };
 
+
 exports.getAllEmpresas = async (req, res) => {
   try {
     const empresas = await db.Empresa.findAll();
