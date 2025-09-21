@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   SesionCaja.init(
     {
-      id: {
+      sesion_caja_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -32,18 +32,21 @@ module.exports = (sequelize, DataTypes) => {
       },
       saldo_inicial: {
         type: DataTypes.DECIMAL,
+        allowNull: false
       },
       fecha_abierto: {
         type: DataTypes.DATE,
+        allowNull: false
       },
       fecha_cierre: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATE
       },
       saldo_cierre: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL
       },
       estado: {
         type: DataTypes.BOOLEAN,
+        allowNull: false
       },
     },
     {

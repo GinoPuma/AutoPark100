@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Vehiculo.init(
     {
-      id: {
+      vehiculo_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -41,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       placa: {
         type: DataTypes.STRING,
+        allowNull: false
       },
       color: {
         type: DataTypes.STRING,

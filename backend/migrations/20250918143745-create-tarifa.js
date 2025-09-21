@@ -3,11 +3,21 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Tarifas', {
-      id: {
+      tarifa_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      vehiculo_tipo_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "VehiculoTipos",
+          key: "vehiculo_tipo_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       precio_hora: {
         type: Sequelize.DECIMAL

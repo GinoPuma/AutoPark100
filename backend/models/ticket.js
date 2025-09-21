@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Ticket.init(
     {
-      id: {
+      ticket_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -48,12 +48,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       fecha_entrada: {
         type: DataTypes.DATE,
+        allowNull: false
       },
       fecha_salida: {
         type: DataTypes.DATE,
       },
       estado: {
         type: DataTypes.STRING,
+        allowNull: false
       },
       monto_total: {
         type: DataTypes.DECIMAL,

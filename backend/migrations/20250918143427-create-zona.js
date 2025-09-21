@@ -4,14 +4,25 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Zonas', {
-      id: {
+      zona_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      sede_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Sedes",
+          key: "sede_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       nombre: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       descripcion: {
         type: Sequelize.STRING

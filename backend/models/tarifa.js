@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Tarifa.init(
     {
-      id: {
+      tarifa_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,

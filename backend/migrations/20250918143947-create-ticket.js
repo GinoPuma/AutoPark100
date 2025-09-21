@@ -3,20 +3,52 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Tickets', {
-      id: {
+      ticket_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      espacio_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Espacios",
+          key: "espacio_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      vehiculo_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Vehiculos",
+          key: "vehiculo_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      tarifa_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Tarifas",
+          key: "tarifa_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       fecha_entrada: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: false
       },
       fecha_salida: {
         type: Sequelize.DATE
       },
       estado: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       monto_total: {
         type: Sequelize.DECIMAL

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Zona.init(
     {
-      id: {
+      zona_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       nombre: {
         type: DataTypes.STRING,
+        allowNull: false
       },
       descripcion: {
         type: DataTypes.STRING,
