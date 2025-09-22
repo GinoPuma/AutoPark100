@@ -23,12 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       ruc: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false,
         unique: true,
       },
       razon_social: { 
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(150),
         allowNull: false },
     },
     {
