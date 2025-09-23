@@ -32,26 +32,28 @@ module.exports = (sequelize, DataTypes) => {
       },
       saldo_inicial: {
         type: DataTypes.DECIMAL,
-        allowNull: false
+        allowNull: false,
       },
       fecha_abierto: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
       },
       fecha_cierre: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
       saldo_cierre: {
-        type: DataTypes.DECIMAL
+        type: DataTypes.DECIMAL,
       },
       estado: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "SesionCajas",
+      modelName: "SesionCaja",
+      tableName: "SesionCajas",
+      timestamps: true,
     }
   );
   return SesionCaja;
