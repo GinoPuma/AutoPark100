@@ -40,11 +40,11 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       placa: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false
       },
       color: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
       },
     },
     {

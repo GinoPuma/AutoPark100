@@ -54,11 +54,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
       },
       estado: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false
       },
       monto_total: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10, 2),
       },
     },
     {

@@ -47,11 +47,11 @@ module.exports = {
         type: Sequelize.DATE
       },
       estado: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(50),
         allowNull: false
       },
       monto_total: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(10, 2)
       },
       createdAt: {
         allowNull: false,

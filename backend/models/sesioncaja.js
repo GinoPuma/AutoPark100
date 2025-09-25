@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       saldo_inicial: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
       fecha_abierto: {
@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
       },
       saldo_cierre: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10, 2),
       },
       estado: {
         type: DataTypes.BOOLEAN,

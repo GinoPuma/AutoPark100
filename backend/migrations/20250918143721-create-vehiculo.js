@@ -30,11 +30,11 @@ module.exports = {
         onDelete: "CASCADE",
       },
       placa: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(50),
         allowNull: false
       },
       color: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(50)
       },
       createdAt: {
         allowNull: false,

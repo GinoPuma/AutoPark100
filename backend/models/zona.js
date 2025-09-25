@@ -29,11 +29,11 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       nombre: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(20),
         allowNull: false
       },
       descripcion: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(150),
       },
     },
     {

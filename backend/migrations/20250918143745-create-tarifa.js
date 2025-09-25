@@ -20,16 +20,16 @@ module.exports = {
         onDelete: "CASCADE",
       },
       precio_hora: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(10, 2)
       },
       precio_dia: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(10, 2)
       },
       precio_mes: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(10, 2)
       },
       descripcion: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(150)
       },
       createdAt: {
         allowNull: false,
