@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
       estado: {
         type: DataTypes.STRING(100),
         allowNull: false,
+        defaultValue: 'activo'
       },
     },
     {
