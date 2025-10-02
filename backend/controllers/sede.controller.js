@@ -3,6 +3,11 @@ const db = require("../models");
 exports.createSede = async (req, res) => {
   try {
     const { empresa_id, nombre, direccion } = req.body;
+
+    const empresa = await db.Empresa.findByPk(empresa_id);
+    if (!empresa) {
+      return res.status(404).json({ message: "Empresa no encontrada" });
+    }
     const nuevaSede = await db.Sede.create({ empresa_id, nombre, direccion });
     res.status(201).json(nuevaSede);
   } catch (error) {

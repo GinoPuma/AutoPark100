@@ -4,7 +4,7 @@ exports.createEspacio = async (req, res) => {
     try {
         const { zona_id, numero, estado } = req.body;
 
-        const zona = await db.zona.findByPk(zona_id)
+        const zona = await db.Zona.findByPk(zona_id)
         if (!zona) {
             return res.status(404).json({ message: "Zona no encontrada" });
         }

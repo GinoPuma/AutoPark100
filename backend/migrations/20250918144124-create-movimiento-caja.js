@@ -32,11 +32,6 @@ module.exports = {
         onDelete: "CASCADE",
       },
 
-      fecha_creacion: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-
       tipo: {
         type: Sequelize.STRING(50),
         allowNull: false,
