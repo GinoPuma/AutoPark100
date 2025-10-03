@@ -59,7 +59,7 @@ exports.updateVehiculoId = async (req, res) => {
     vehiculoTipo.nombre = nombre || vehiculoTipo.nombre;
     vehiculoTipo.descripcion = descripcion || vehiculoTipo.descripcion;
 
-    vehiculoTipo.save();
+    await vehiculoTipo.save();
     res.status(200).json(vehiculoTipo);
   } catch (error) {
     console.error(error);
@@ -77,7 +77,7 @@ exports.deleteVehiculoTipo = async (req, res) => {
     res.status(404).json("Tipo de vehiculo no encontrado");
   }
 
-  vehiculoTipo.destroy();
+  await vehiculoTipo.destroy();
   res.status(204).send();
   try {
   } catch (error) {
