@@ -1,0 +1,210 @@
+/* ==== Reset y base ==== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f1f5f9;
+  color: #334155;
+  line-height: 1.6;
+}
+
+/* ==== Layout general ==== */
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ==== Sidebar ==== */
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #fff;
+  padding: 2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar h2 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #38bdf8;
+}
+
+.sidebar a {
+  color: #e2e8f0;
+  text-decoration: none;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.sidebar a:hover {
+  background: #334155;
+  color: #fff;
+  transform: translateX(4px);
+}
+
+/* ==== Contenido ==== */
+.content {
+  flex: 1;
+  padding: 2rem;
+  background: #f8fafc;
+  overflow-y: auto;
+}
+
+.content h1 {
+  font-size: 1.9rem;
+  margin-bottom: 0.8rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.content p {
+  margin-bottom: 1.5rem;
+  color: #64748b;
+}
+
+/* ==== Tarjetas ==== */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* ==== Formularios ==== */
+form {
+  background: #fff;
+  padding: 1.8rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+form h2 {
+  margin-bottom: 1.2rem;
+  color: #0f172a;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+/* ==== Botones ==== */
+button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.4rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+button:hover {
+  background: #1e40af;
+  transform: translateY(-1px);
+}
+
+button.warning {
+  background: #f59e0b;
+}
+button.warning:hover {
+  background: #b45309;
+}
+
+button.danger {
+  background: #dc2626;
+}
+button.danger:hover {
+  background: #991b1b;
+}
+
+button.success {
+  background: #10b981;
+}
+button.success:hover {
+  background: #047857;
+}
+
+/* ==== Tablas ==== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+thead {
+  background: #1e293b;
+  color: #fff;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.95rem;
+}
+
+tbody tr {
+  transition: background 0.2s;
+}
+
+tbody tr:hover {
+  background: #f1f5f9;
+}
+
+td button {
+  margin-right: 0.6rem;
+}
+
+/* ==== Buscador ==== */
+input[type="search"] {
+  width: 320px;
+  margin-bottom: 1.2rem;
+  display: block;
+  border-radius: 12px;
+}
