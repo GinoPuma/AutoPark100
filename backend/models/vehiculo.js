@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       Vehiculo.belongsTo(models.VehiculoTipo, {
         foreignKey: "vehiculo_tipo_id",
       });
-      Vehiculo.belongsTo(models.Cliente, { foreignKey: "cliente_id" });
       Vehiculo.hasMany(models.Ticket, { foreignKey: "vehiculo_id" });
+      Vehiculo.belongsTo(models.Reserva, { foreignKey: "reserva_id", allowNull: true });
     }
   }
   Vehiculo.init(
@@ -31,12 +31,12 @@ module.exports = (sequelize, DataTypes) => {
           key: "vehiculo_tipo_id",
         },
       },
-      cliente_id: {
+      reserva_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: "Clientes",
-          key: "cliente_id",
+          model: "Reservas",
+          key: "reserva_id",
         },
       },
       placa: {

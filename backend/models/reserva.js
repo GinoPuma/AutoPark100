@@ -10,11 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Reserva.belongsTo(models.Cliente, { foreignKey: "cliente_id" });
-      Reserva.belongsTo(models.VehiculoTipo, {
-        foreignKey: "vehiculo_tipo_id",
-      });
       Reserva.belongsTo(models.Sede, { foreignKey: "sede_id" });
       Reserva.belongsTo(models.Espacio, { foreignKey: "espacio_id" });
+      Reserva.hasMany(models.Vehiculo, { foreignKey: "reserva_id" });
     }
   }
   Reserva.init(
@@ -31,14 +29,6 @@ module.exports = (sequelize, DataTypes) => {
         references: {
           model: "Clientes",
           key: "cliente_id",
-        },
-      },
-      vehiculo_tipo_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "VehiculoTipos",
-          key: "vehiculo_tipo_id",
         },
       },
       sede_id: {

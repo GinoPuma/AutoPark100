@@ -19,15 +19,13 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      cliente_id: {
+      reserva_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: "Clientes",
-          key: "cliente_id",
+          model: "Reservas",
+          key: "reserva_id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       placa: {
         type: Sequelize.STRING(50),

@@ -21,17 +21,6 @@ module.exports = {
         onDelete: "CASCADE",
       },
 
-      vehiculo_tipo_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "VehiculoTipos",
-          key: "vehiculo_tipo_id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-
       sede_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
