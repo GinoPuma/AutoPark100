@@ -1,5 +1,4 @@
 const db = require("../models");
-const zona = require("../models/zona");
 
 exports.createZona = async (req, res) => {
   try {
@@ -8,7 +7,7 @@ exports.createZona = async (req, res) => {
     const sede = await db.Sede.findByPk(sede_id);
 
     if (!sede) {
-      res.status(404).json({ message: "Sede no encontrada" });
+      return res.status(404).json({ message: "Sede no encontrada" });
     }
 
     const nuevaZona = await db.Zona.create({ sede_id, nombre, descripcion });
@@ -40,7 +39,7 @@ exports.getZonasById = async (req, res) => {
     const zona = await db.Zona.findByPk(id);
 
     if (!zona) {
-      res.status(404).json({ message: "Zona no encontrada" });
+      return res.status(404).json({ message: "Zona no encontrada" });
     }
 
     res.status(200).json(zona);
@@ -59,12 +58,12 @@ exports.updateZona = async (req, res) => {
 
     const sede = await db.Sede.findByPk(sede_id);
     if (!sede) {
-      res.status(404).json({ message: "Sede no encontrada" });
+      return res.status(404).json({ message: "Sede no encontrada" });
     }
 
     const zona = await db.Zona.findByPk(id);
     if (!zona) {
-      res.status(404).json({ message: "Zona no encontrada" });
+      return res.status(404).json({ message: "Zona no encontrada" });
     }
 
     zona.sede_id = sede_id || zona.sede_id;
@@ -84,10 +83,10 @@ exports.updateZona = async (req, res) => {
 exports.deleteZona = async (req, res) => {
   try {
     const { id } = req.params;
-    const zona = db.Zona.findByPk(id);
+    const zona = await db.Zona.findByPk(id);
 
     if (!zona) {
-      res.status(404).json({ message: "Zona no encontrada" });
+      return res.status(404).json({ message: "Zona no encontrada" });
     }
 
     await zona.destroy();

@@ -13,7 +13,9 @@ exports.createTarifa = async (req, res) => {
     const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
 
     if (!vehiculoTipo) {
-      res.status(404).json({ message: "Tipo de vehiculo no encontrado" });
+      return res
+        .status(404)
+        .json({ message: "Tipo de vehiculo no encontrado" });
     }
 
     const nuevaTarifa = await db.Tarifa.create(
@@ -51,7 +53,7 @@ exports.getTarifaById = async (req, res) => {
     const tarifa = await db.Tarifa.findByPk(id);
 
     if (!tarifa) {
-      res.status(404).json({ message: "Tarifa no encontrada" });
+      return res.status(404).json({ message: "Tarifa no encontrada" });
     }
 
     res.status(200).json(tarifa);
@@ -77,12 +79,14 @@ exports.udpateTarifa = async (req, res) => {
     const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
 
     if (!vehiculoTipo) {
-      res.status(404).json({ message: "Tipo de vehiculo no encontrado" });
+      return res
+        .status(404)
+        .json({ message: "Tipo de vehiculo no encontrado" });
     }
 
     const tarifa = await db.Tarifa.findByPk(id);
     if (!tarifa) {
-      res.status(404).json({ message: "Tarifa no encontrado" });
+      return res.status(404).json({ message: "Tarifa no encontrado" });
     }
 
     tarifa.vehiculo_tipo_id = vehiculo_tipo_id || tarifa.vehiculo_tipo_id;
@@ -107,7 +111,7 @@ exports.deleteTarifa = async (req, res) => {
     const tarifa = await db.Tarifa.findByPk(id);
 
     if (!tarifa) {
-      res.status(404).json({ message: "Tarifa no encontrada" });
+      return res.status(404).json({ message: "Tarifa no encontrada" });
     }
 
     await tarifa.destroy();

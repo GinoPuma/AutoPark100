@@ -17,13 +17,13 @@ exports.createTicket = async (req, res) => {
     const tarifa = await db.Tarifa.findByPk(tarifa_id);
 
     if (!espacio) {
-      res.status(404).json({ message: "Espacio no encontrado" });
+      return res.status(404).json({ message: "Espacio no encontrado" });
     }
     if (!vehiculo) {
-      res.status(404).json({ message: "Vehiculo no encontrado" });
+      return res.status(404).json({ message: "Vehiculo no encontrado" });
     }
     if (!tarifa) {
-      res.status(404).json({ message: "Tarifa no encontrada" });
+      return res.status(404).json({ message: "Tarifa no encontrada" });
     }
 
     const nuevoTicket = await db.Ticket.create({
@@ -63,7 +63,7 @@ exports.getTicketById = async (req, res) => {
     const ticket = await db.Ticket.findByPk(id);
 
     if (!ticket) {
-      res.status(404).json({ message: "Ticket no encontrado" });
+      return res.status(404).json({ message: "Ticket no encontrado" });
     }
 
     res.status(200).json(ticket);
@@ -90,7 +90,7 @@ exports.updateTicket = async (req, res) => {
     const ticket = await db.Ticket.findByPk(id);
 
     if (!ticket) {
-      res.status(404).json({ message: "Ticket no encontrado" });
+      return res.status(404).json({ message: "Ticket no encontrado" });
     }
 
     ticket.espacio_id = espacio_id || ticket.espacio_id;
@@ -117,7 +117,7 @@ exports.deleteTicket = async (req, res) => {
     const ticket = await db.Ticket.findByPk(id);
 
     if (!ticket) {
-      res.status(404).json({ message: "Ticket no encontrado" });
+      return res.status(404).json({ message: "Ticket no encontrado" });
     }
     await ticket.destroy();
     res.status(204).send();

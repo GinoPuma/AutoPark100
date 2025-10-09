@@ -8,10 +8,10 @@ exports.createUsuario = async (req, res) => {
     const empresa = await db.Empresa.findByPk(empresa_id);
 
     if (!rol) {
-      res.status(404).json({ message: "Rol no encontrado" });
+      return res.status(404).json({ message: "Rol no encontrado" });
     }
     if (!empresa) {
-      res.status(404).json({ message: "Empresa no encontrada" });
+      return res.status(404).json({ message: "Empresa no encontrada" });
     }
 
     const nuevoUsuario = await db.Usuario.create({
@@ -51,7 +51,7 @@ exports.getUsuarioById = async (req, res) => {
 
     const usuario = await db.Usuario.findByPk(id);
     if (!usuario) {
-      res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     res.status(200).json(usuario);
@@ -72,15 +72,15 @@ exports.updateUsuario = async (req, res) => {
     const empresa = await db.Empresa.findByPk(empresa_id);
 
     if (!rol) {
-      res.status(404).json({ message: "Rol no encontrado" });
+      return res.status(404).json({ message: "Rol no encontrado" });
     }
     if (!empresa) {
-      res.status(404).json({ message: "Empresa no encontrada" });
+      return res.status(404).json({ message: "Empresa no encontrada" });
     }
 
     const usuario = await db.Usuario.findByPk(id);
     if (!usuario) {
-      res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     usuario.rol_id = rol_id || usuario.rol_id;
@@ -107,7 +107,7 @@ exports.deleteUsuario = async (req, res) => {
     const usuario = await db.Usuario.findByPk(id);
 
     if (!usuario) {
-      res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     await usuario.destroy();

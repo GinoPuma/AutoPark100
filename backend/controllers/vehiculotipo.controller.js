@@ -7,7 +7,6 @@ exports.createVehiculoTipo = async (req, res) => {
       nombre,
       descripcion,
     });
-
     res.status(201).json(nuevoVehiculoTipo);
   } catch (error) {
     console.error(error);
@@ -34,9 +33,10 @@ exports.getVehiculoTipoById = async (req, res) => {
     const { id } = req.params;
     const vehiculoTipo = await db.VehiculoTipo.findByPk(id);
     if (!vehiculoTipo) {
-      res.status(404).json({ message: "Tipo de vehiculo no encontrado" });
+      return res
+        .status(404)
+        .json({ message: "Tipo de vehículo no encontrado" });
     }
-
     res.status(200).json(vehiculoTipo);
   } catch (error) {
     console.error(error);
@@ -46,19 +46,18 @@ exports.getVehiculoTipoById = async (req, res) => {
   }
 };
 
-exports.updateVehiculoId = async (req, res) => {
+exports.updateVehiculoTipo = async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, descripcion } = req.body;
     const vehiculoTipo = await db.VehiculoTipo.findByPk(id);
-
     if (!vehiculoTipo) {
-      res.status(404).json("Tipo de vehiculo no encontrado");
+      return res
+        .status(404)
+        .json({ message: "Tipo de vehículo no encontrado" });
     }
-
     vehiculoTipo.nombre = nombre || vehiculoTipo.nombre;
     vehiculoTipo.descripcion = descripcion || vehiculoTipo.descripcion;
-
     await vehiculoTipo.save();
     res.status(200).json(vehiculoTipo);
   } catch (error) {
@@ -70,16 +69,16 @@ exports.updateVehiculoId = async (req, res) => {
 };
 
 exports.deleteVehiculoTipo = async (req, res) => {
-  const { id } = req.params;
-  const vehiculoTipo = db.VehiculoTipo.findByPk(id);
-
-  if (!vehiculoTipo) {
-    res.status(404).json("Tipo de vehiculo no encontrado");
-  }
-
-  await vehiculoTipo.destroy();
-  res.status(204).send();
   try {
+    const { id } = req.params;
+    const vehiculoTipo = await db.VehiculoTipo.findByPk(id);
+    if (!vehiculoTipo) {
+      return res
+        .status(404)
+        .json({ message: "Tipo de vehículo no encontrado" });
+    }
+    await vehiculoTipo.destroy();
+    res.status(204).send();
   } catch (error) {
     console.error(error);
     res
