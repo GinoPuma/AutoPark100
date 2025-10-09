@@ -1,8 +1,8 @@
-const db = require('../models');
-const bcrypt = require('bcryptjs');
-const jwtHelper = require('../utils/jwt'); 
+const db = require("../models");
+const bcrypt = require("bcryptjs");
+const jwtHelper = require("../utils/jwt");
 
-const saltRounds = 10; 
+const saltRounds = 10;
 
 exports.signup = async (req, res) => {
   try {
@@ -17,22 +17,23 @@ exports.signup = async (req, res) => {
       username,
       correo,
       password: hashedPassword,
-      estado: 'activo' 
+      estado: "activo",
     });
 
     // Generar token JWT y enviarlo como cookie
     jwtHelper.signToken(nuevoUsuario.usuario_id, res);
 
-    // Responder con información del usuario 
+    // Responder con información del usuario
     const { password: _, ...usuarioInfo } = nuevoUsuario.get({ plain: true });
     res.status(201).json({
-      message: 'Usuario registrado y autenticado exitosamente.',
-      user: usuarioInfo
+      message: "Usuario registrado y autenticado exitosamente.",
+      user: usuarioInfo,
     });
-
   } catch (error) {
-    console.error('Error en registro:', error);
-    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    console.error("Error en registro:", error);
+    res
+      .status(500)
+      .json({ message: "Error interno del servidor", error: error.message });
   }
 };
 
@@ -44,19 +45,17 @@ exports.login = async (req, res) => {
     // Encontrar al usuario por username
     const usuario = await db.Usuario.findOne({
       where: { username: username },
-      include: [ 
-        { model: db.Empresa, attributes: ['empresa_id', 'razon_social'] },
-        { model: db.Rol, attributes: ['rol_id', 'nombre'] }
-      ]
+      include: [
+        { model: db.Empresa, attributes: ["empresa_id", "razon_social"] },
+        { model: db.Rol, attributes: ["rol_id", "nombre"] },
+      ],
     });
 
     if (usuario.estado !== "activo") {
-    return res
-      .status(403)
-      .json({
+      return res.status(403).json({
         message: "Tu cuenta no está activa. Contacta al administrador.",
       });
-  }
+    }
 
     // Generar token JWT y enviarlo como cookie
     jwtHelper.signToken(usuario.usuario_id, res);
@@ -64,13 +63,14 @@ exports.login = async (req, res) => {
     // Responder con información del usuario (sin contraseña)
     const { password: _, ...usuarioInfo } = usuario.get({ plain: true });
     res.status(200).json({
-      message: 'Inicio de sesión exitoso.',
-      user: usuarioInfo
+      message: "Inicio de sesión exitoso.",
+      user: usuarioInfo,
     });
-
   } catch (error) {
-    console.error('Error en inicio de sesión:', error);
-    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    console.error("Error en inicio de sesión:", error);
+    res
+      .status(500)
+      .json({ message: "Error interno del servidor", error: error.message });
   }
 };
 
@@ -79,10 +79,12 @@ exports.logout = async (req, res) => {
   try {
     jwtHelper.deleteCookieJWT(res);
 
-    res.status(200).json({ message: 'Cierre de sesión exitoso.' });
+    res.status(200).json({ message: "Cierre de sesión exitoso." });
   } catch (error) {
-    console.error('Error en cierre de sesión:', error);
-    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    console.error("Error en cierre de sesión:", error);
+    res
+      .status(500)
+      .json({ message: "Error interno del servidor", error: error.message });
   }
 };
 
@@ -90,11 +92,13 @@ exports.logout = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     if (!req.usuario) {
-      return res.status(401).json({ message: 'No autenticado.' });
+      return res.status(401).json({ message: "No autenticado." });
     }
     res.status(200).json(req.usuario);
   } catch (error) {
-    console.error('Error al obtener usuario actual:', error);
-    res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    console.error("Error al obtener usuario actual:", error);
+    res
+      .status(500)
+      .json({ message: "Error interno del servidor", error: error.message });
   }
 };
