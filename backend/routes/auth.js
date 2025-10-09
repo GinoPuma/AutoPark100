@@ -5,7 +5,6 @@ const { protect } = require('../middlewares/auth');
 const { validateSignup, validateLogin } = require('../validators/auth.validators');
 
 // --- Definir Rutas ---
-
 router.post('/signup', validateSignup, authController.signup);
 router.post('/login', validateLogin, authController.login);
 router.post('/logout', authController.logout);
