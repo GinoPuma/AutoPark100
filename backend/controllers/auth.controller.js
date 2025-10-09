@@ -10,7 +10,6 @@ exports.signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Crear el usuario con estado 'activo' por defecto
     const nuevoUsuario = await db.Usuario.create({
       empresa_id,
       rol_id,
@@ -50,11 +49,6 @@ exports.login = async (req, res) => {
         { model: db.Rol, attributes: ['rol_id', 'nombre'] }
       ]
     });
-
-    // Verificar si el usuario está activo
-    if (usuario.estado !== 'activo') {
-      return res.status(403).json({ message: 'Tu cuenta no está activa. Contacta al administrador.' });
-    }
 
     // Generar token JWT y enviarlo como cookie
     jwtHelper.signToken(usuario.usuario_id, res);

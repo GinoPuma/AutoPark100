@@ -32,7 +32,7 @@ exports.getAllVehiculoTipos = async (req, res) => {
 exports.getVehiculoTipoById = async (req, res) => {
   try {
     const { id } = req.params;
-    const vehiculoTipo = db.VehiculoTipo.findByPk(id);
+    const vehiculoTipo = await db.VehiculoTipo.findByPk(id);
     if (!vehiculoTipo) {
       res.status(404).json({ message: "Tipo de vehiculo no encontrado" });
     }

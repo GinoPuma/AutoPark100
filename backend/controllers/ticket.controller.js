@@ -119,7 +119,7 @@ exports.deleteTicket = async (req, res) => {
     if (!ticket) {
       res.status(404).json({ message: "Ticket no encontrado" });
     }
-    await ticket.destroy;
+    await ticket.destroy();
     res.status(204).send();
   } catch (error) {
     console.error(error);

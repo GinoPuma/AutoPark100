@@ -33,7 +33,7 @@ exports.getAllSede = async (req, res) => {
 exports.getSedeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const sede = await db.Sede.finByPK(id);
+    const sede = await db.Sede.findByPK(id);
     if (!sede) {
       return res.status(404).json({ message: "Sede no encotrada" });
     }

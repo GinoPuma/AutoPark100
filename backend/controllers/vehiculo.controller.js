@@ -1,4 +1,4 @@
-const db = requiere("../models");
+const db = require("../models");
 
 exports.createVehiculo = async (req, res) => {
   try {
@@ -85,7 +85,7 @@ exports.updateVehiculo = async (req, res) => {
 exports.deleteVehiculo = async (req, res) => {
   try {
     const { id } = req.params;
-    const vehiculo = db.Vehiculo.findByPk(id);
+    const vehiculo = await db.Vehiculo.findByPk(id);
 
     if (!vehiculo) {
       return res.status(404).json({ message: "Vehiculo no encontrado" });

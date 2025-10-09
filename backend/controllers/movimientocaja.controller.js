@@ -131,7 +131,7 @@ exports.updateMovimientoCaja = async (req, res) => {
       }
       movimientoCaja.tipo = tipo;
     }
-    if (descripcion !== undefined) movimiento.descripcion = descripcion;
+    if (descripcion !== undefined) movimientoCaja.descripcion = descripcion;
     if (monto !== undefined) {
       if (monto < 0)
         return res
