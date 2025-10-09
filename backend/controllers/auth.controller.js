@@ -50,6 +50,14 @@ exports.login = async (req, res) => {
       ]
     });
 
+    if (usuario.estado !== "activo") {
+    return res
+      .status(403)
+      .json({
+        message: "Tu cuenta no está activa. Contacta al administrador.",
+      });
+  }
+
     // Generar token JWT y enviarlo como cookie
     jwtHelper.signToken(usuario.usuario_id, res);
 

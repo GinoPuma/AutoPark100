@@ -74,14 +74,6 @@ const validateLogin = (req, res, next) => {
       .json({ message: "Nombre de usuario y contraseña son requeridos." });
   }
 
-  if (usuario.estado !== "activo") {
-    return res
-      .status(403)
-      .json({
-        message: "Tu cuenta no está activa. Contacta al administrador.",
-      });
-  }
-
   next();
 };
 
