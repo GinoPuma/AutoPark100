@@ -24,7 +24,7 @@ exports.createUsuario = async (req, res) => {
       estado,
     });
 
-    res.status(201).json(nuevoUsuario);
+    res.status(201).json({message: "Usuario creado correctamente", user: nuevoUsuario});
   } catch (error) {
     console.error("Error al crear Usuario", error);
     res
@@ -111,7 +111,7 @@ exports.deleteUsuario = async (req, res) => {
     }
 
     await usuario.destroy();
-    res.status(204).send();
+    res.status(204).send().json({ message: "Usuario eliminado correctamente" });
   } catch (error) {
     console.error("Error al eliminar el Usuario", error);
     res
