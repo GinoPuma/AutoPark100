@@ -1,38 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const sedeController = require("../controllers/sede.controller");
-// const { validateSede } = require("../validators/sede.validator");
 const { protect, restrictTo } = require("../middlewares/auth");
+const usuarioController = require("../controllers/usuario.controller");
 
 router.post(
   "/",
   protect,
   restrictTo("Administrador"),
-  sedeController.createSede
+  usuarioController.createUsuario
 );
 router.get(
   "/",
   protect,
   restrictTo("Administrador"),
-  sedeController.getAllSede
+  usuarioController.getAllUsuarios
 );
 router.get(
   "/:id",
   protect,
   restrictTo("Administrador"),
-  sedeController.getSedeById
+  usuarioController.getUsuarioById
 );
 router.put(
   "/:id",
   protect,
   restrictTo("Administrador"),
-  sedeController.updateSede
+  usuarioController.updateUsuario
 );
 router.delete(
   "/:id",
   protect,
   restrictTo("Administrador"),
-  sedeController.deleteSede
+  usuarioController.deleteUsuario
 );
 
 module.exports = router;

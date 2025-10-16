@@ -65,7 +65,7 @@ exports.getTarifaById = async (req, res) => {
   }
 };
 
-exports.udpateTarifa = async (req, res) => {
+exports.updateTarifa = async (req, res) => {
   try {
     const { id } = req.params;
     const {
