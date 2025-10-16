@@ -1,12 +1,30 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const empresaController = require('../controllers/empresa.controller');
-const { validateEmpresa } = require('../validators/empresa.validator');
+const empresaController = require("../controllers/empresa.controller");
+const { validateEmpresa } = require("../validators/empresa.validator");
+const { protect, restrictTo } = require("../middlewares/auth");
 
-router.post('/', empresaController.createEmpresa, validateEmpresa);
-router.get('/', empresaController.getAllEmpresas);
-router.get('/:id', empresaController.getEmpresaById);
-router.put('/:id', empresaController.updateEmpresa, validateEmpresa);
-router.delete('/:id', empresaController.deleteEmpresa);
+router.post(
+  "/",
+  protect,
+  restrictTo("Administrador"),
+  validateEmpresa,
+  empresaController.createEmpresa
+);
+router.get("/", protect, empresaController.getAllEmpresas);
+router.get("/:id", protect, empresaController.getEmpresaById);
+router.put(
+  "/:id",
+  protect,
+  restrictTo("Administrador"),
+  validateEmpresa,
+  empresaController.updateEmpresa
+);
+router.delete(
+  "/:id",
+  protect,
+  restrictTo("Administrador"),
+  empresaController.deleteEmpresa
+);
 
 module.exports = router;
