@@ -46,7 +46,7 @@ exports.getAllPagos = async (req, res) => {
         { model: db.Ticket, atributtes: ["ticket_id", "monto_total"] },
       ],
     });
-    res.json(200).json(pagos);
+    res.status(200).json(pagos);
   } catch (error) {
     console.error("Error al obtener pagos:", error);
     res
@@ -65,7 +65,7 @@ exports.getPagoById = async (req, res) => {
       ],
     });
     if (!pago) return res.status(404).json({ message: "Pago no encontrado." });
-    res.json(200).json(pago);
+    res.status(200).json(pago);
   } catch (error) {
     console.error("Error al obtener pago:", error);
     res
