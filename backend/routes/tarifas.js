@@ -82,10 +82,6 @@
  *     responses:
  *       201:
  *         description: Tarifa creada correctamente
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Tarifa'
  *       404:
  *         description: Tipo de vehículo no encontrado
  *       500:
@@ -99,12 +95,6 @@
  *     responses:
  *       200:
  *         description: Lista de todas las tarifas
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Tarifa'
  *       500:
  *         description: Error interno del servidor
  */
@@ -128,10 +118,6 @@
  *     responses:
  *       200:
  *         description: Tarifa encontrada correctamente
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Tarifa'
  *       404:
  *         description: Tarifa no encontrada
  *       500:
@@ -175,10 +161,6 @@
  *     responses:
  *       200:
  *         description: Tarifa actualizada correctamente
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Tarifa'
  *       404:
  *         description: Tarifa o tipo de vehículo no encontrado
  *       500:
