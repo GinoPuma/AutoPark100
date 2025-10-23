@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const db = require("./models"); 
 const cookieParser = require("cookie-parser");
+const { swaggerUi, swaggerSpec } = require("./swagger"); 
 
 dotenv.config();
 
@@ -16,7 +17,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+// --- Swagger ---
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // --- Rutas de la API ---
 const apiRoutes = require("./routes");
 app.use("/api", apiRoutes); 

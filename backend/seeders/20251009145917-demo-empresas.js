@@ -8,7 +8,7 @@ module.exports = {
       [
         {
           ruc: "20123456789",
-          razon_social: "Compañía Ejemplo S.A.C.",
+          razon_social: "Compañia Julio",
           createdAt: new Date(),
           updatedAt: new Date(),
         },

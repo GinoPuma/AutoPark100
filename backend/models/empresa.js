@@ -29,7 +29,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       razon_social: { 
         type: DataTypes.STRING(150),
-        allowNull: false },
+        allowNull: false 
+      },
     },
     {
       sequelize,

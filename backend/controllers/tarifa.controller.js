@@ -18,13 +18,13 @@ exports.createTarifa = async (req, res) => {
         .json({ message: "Tipo de vehiculo no encontrado" });
     }
 
-    const nuevaTarifa = await db.Tarifa.create(
+    const nuevaTarifa = await db.Tarifa.create({
       vehiculo_tipo_id,
       precio_hora,
       precio_dia,
       precio_mes,
-      descripcion
-    );
+      descripcion,
+    });
 
     res.status(201).json(nuevaTarifa);
   } catch (error) {
@@ -37,7 +37,7 @@ exports.createTarifa = async (req, res) => {
 
 exports.getAllTarifas = async (req, res) => {
   try {
-    const tarifas = db.Tarifa.findAll();
+    const tarifas = await db.Tarifa.findAll();
     res.status(200).json(tarifas);
   } catch (error) {
     console.error("Error al obtener Tarifas", error);
@@ -76,12 +76,14 @@ exports.updateTarifa = async (req, res) => {
       descripcion,
     } = req.body;
 
-    const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
-
-    if (!vehiculoTipo) {
-      return res
-        .status(404)
-        .json({ message: "Tipo de vehiculo no encontrado" });
+    if (vehiculo_tipo_id !== undefined) {
+      const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
+      if (!vehiculoTipo) {
+        return res
+          .status(404)
+          .json({ message: "Tipo de vehiculo no encontrado" });
+      }
+      tarifa.vehiculo_tipo_id = vehiculo_tipo_id;
     }
 
     const tarifa = await db.Tarifa.findByPk(id);

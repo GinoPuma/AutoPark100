@@ -87,15 +87,17 @@ exports.createReserva = async (req, res) => {
         }
       }
     }
-    const nuevaReserva = await db.Reserva.create(
+
+    const nuevaReserva = await db.Reserva.create({
       cliente_id,
       sede_id,
       espacio_id,
       inicio_reserva,
       fin_reserva,
       estado,
-      anticipo
-    );
+      anticipo,
+    });
+
     if (estado === "confirmada") await espacio.update({ estado: "ocupado" });
 
     res.status(201).json(nuevaReserva);
@@ -111,9 +113,9 @@ exports.getAllReservas = async (req, res) => {
   try {
     const reservas = await db.Reserva.findAll({
       include: [
-        { model: db.Cliente, atributes: ["cliente_id", "nombre", "email"] },
-        { model: db.Sede, atributes: ["sede_id", "nombre", "ubicacion"] },
-        { model: db.Espacio, atributes: ["espacio_id", "numero", "zona_id"] },
+        { model: db.Cliente, atributtes: ["cliente_id", "nombre", "email"] },
+        { model: db.Sede, atributtes: ["sede_id", "nombre", "ubicacion"] },
+        { model: db.Espacio, atributtes: ["espacio_id", "numero", "zona_id"] },
       ],
     });
 
@@ -131,9 +133,9 @@ exports.getReservaById = async (req, res) => {
     const { id } = req.params;
     const reserva = await db.Reserva.findByPk(id, {
       include: [
-        { model: db.Cliente, atributes: ["cliente_id", "nombre", "apellido"] },
-        { model: db.Sede, atributes: ["sede_id", "nombre", "ubicacion"] },
-        { model: db.Espacio, atributes: ["espacio_id", "numero", "zona_id"] },
+        { model: db.Cliente, atributtes: ["cliente_id", "nombre", "apellido"] },
+        { model: db.Sede, atributtes: ["sede_id", "nombre", "ubicacion"] },
+        { model: db.Espacio, atributtes: ["espacio_id", "numero", "zona_id"] },
       ],
     });
     if (!reserva)

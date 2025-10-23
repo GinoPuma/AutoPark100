@@ -29,9 +29,10 @@ module.exports = {
       },
       placa: {
         type: Sequelize.STRING(50),
+        unique: true,
         allowNull: false
       },
-      color: {
+      descripcion: {
         type: Sequelize.STRING(50)
       },
       createdAt: {

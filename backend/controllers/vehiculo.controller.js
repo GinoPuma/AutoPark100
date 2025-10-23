@@ -2,7 +2,7 @@ const db = require("../models");
 
 exports.createVehiculo = async (req, res) => {
   try {
-    const { vehiculo_tipo_id, reserva_id, placa, color } = req.body;
+    const { vehiculo_tipo_id, reserva_id, placa, descripcion } = req.body;
     const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
     const reserva = await db.Reserva.findByPk(reserva_id);
     if (!vehiculoTipo) {
@@ -18,7 +18,7 @@ exports.createVehiculo = async (req, res) => {
       vehiculo_tipo_id,
       reserva_id,
       placa,
-      color,
+      descripcion,
     });
     res.status(201).json(nuevoVehiculo);
   } catch (error) {
@@ -62,17 +62,17 @@ exports.getVehiculoById = async (req, res) => {
 exports.updateVehiculo = async (req, res) => {
   try {
     const { id } = req.params;
-    const { vehiculo_tipo_id, reserva_id, placa, color } = req.body;
+    const { vehiculo_tipo_id, reserva_id, placa, descripcion } = req.body;
 
-    const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
-    const reserva = await db.Reserva.findByPk(reserva_id);
-    if (!vehiculoTipo) {
+    if (
+      vehiculo_tipo_id &&
+      !(await db.VehiculoTipo.findByPk(vehiculo_tipo_id))
+    ) {
       return res
         .status(404)
-        .json({ message: "Tipo de vehiculo no encontrado" });
+        .json({ message: "Tipo de vehículo no encontrado" });
     }
-
-    if (!reserva) {
+    if (reserva_id && !(await db.Reserva.findByPk(reserva_id))) {
       return res.status(404).json({ message: "Reserva no encontrada" });
     }
 
@@ -84,7 +84,7 @@ exports.updateVehiculo = async (req, res) => {
     vehiculo.vehiculo_tipo_id = vehiculo_tipo_id || vehiculo.vehiculo_tipo_id;
     vehiculo.reserva_id = reserva_id || vehiculo.reserva_id;
     vehiculo.placa = placa || vehiculo.placa;
-    vehiculo.color = color || vehiculo.color;
+    vehiculo.descripcion = descripcion || vehiculo.descripcion;
 
     await vehiculo.save();
     res.status(200).json(vehiculo);
