@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /ticket:
+ * /tickets:
  *   post:
  *     summary: Crea un nuevo ticket
  *     tags: [Ticket]
@@ -65,7 +65,7 @@
 
 /**
  * @swagger
- * /ticket/{id}:
+ * /tickets/{id}:
  *   get:
  *     summary: Obtiene un ticket por ID
  *     tags: [Ticket]

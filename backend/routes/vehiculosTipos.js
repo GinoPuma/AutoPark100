@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /vehiculo-tipo:
+ * /vehiculo-tipos:
  *   post:
  *     summary: Crear un nuevo tipo de vehículo
  *     tags: [VehiculoTipos]
@@ -37,7 +37,7 @@
 
 /**
  * @swagger
- * /vehiculo-tipo:
+ * /vehiculo-tipos:
  *   get:
  *     summary: Obtener todos los tipos de vehículos
  *     tags: [VehiculoTipos]
@@ -52,7 +52,7 @@
 
 /**
  * @swagger
- * /vehiculo-tipo/{id}:
+ * /vehiculo-tipos/{id}:
  *   get:
  *     summary: Obtener un tipo de vehículo por ID
  *     tags: [VehiculoTipos]
@@ -76,7 +76,7 @@
 
 /**
  * @swagger
- * /vehiculo-tipo/{id}:
+ * /vehiculo-tipos/{id}:
  *   put:
  *     summary: Actualizar un tipo de vehículo
  *     tags: [VehiculoTipos]
@@ -111,7 +111,7 @@
 
 /**
  * @swagger
- * /vehiculo-tipo/{id}:
+ * /vehiculo-tipos/{id}:
  *   delete:
  *     summary: Eliminar un tipo de vehículo
  *     tags: [VehiculoTipos]

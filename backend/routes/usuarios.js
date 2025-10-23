@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /usuario:
+ * /usuarios:
  *   post:
  *     summary: Crea un nuevo usuario
  *     tags: [Usuario]
@@ -63,7 +63,7 @@
 
 /**
  * @swagger
- * /usuario/{id}:
+ * /usuarios/{id}:
  *   get:
  *     summary: Obtiene un usuario por ID
  *     tags: [Usuario]

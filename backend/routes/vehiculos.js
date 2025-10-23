@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /vehiculo:
+ * /vehiculos:
  *   post:
  *     summary: Crea un nuevo vehículo
  *     tags: [Vehiculo]
@@ -54,7 +54,7 @@
 
 /**
  * @swagger
- * /vehiculo/{id}:
+ * /vehiculos/{id}:
  *   get:
  *     summary: Obtiene un vehículo por ID
  *     tags: [Vehiculo]

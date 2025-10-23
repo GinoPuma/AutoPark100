@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /zona:
+ * /zonas:
  *   post:
  *     summary: Crear una nueva zona
  *     tags: [Zonas]
@@ -43,7 +43,7 @@
 
 /**
  * @swagger
- * /zona:
+ * /zonas:
  *   get:
  *     summary: Obtener todas las zonas
  *     tags: [Zonas]
@@ -58,7 +58,7 @@
 
 /**
  * @swagger
- * /zona/{id}:
+ * /zonas/{id}:
  *   get:
  *     summary: Obtener una zona por ID
  *     tags: [Zonas]
@@ -82,7 +82,7 @@
 
 /**
  * @swagger
- * /zona/{id}:
+ * /zonas/{id}:
  *   put:
  *     summary: Actualizar una zona existente
  *     tags: [Zonas]
@@ -119,7 +119,7 @@
 
 /**
  * @swagger
- * /zona/{id}:
+ * /zonas/{id}:
  *   delete:
  *     summary: Eliminar una zona
  *     tags: [Zonas]

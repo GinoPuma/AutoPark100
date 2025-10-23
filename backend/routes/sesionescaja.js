@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /sesioncaja:
+ * /sesiones-caja:
  *   post:
  *     summary: Crea una nueva sesión de caja
  *     tags: [SesionCaja]
@@ -62,7 +62,7 @@
 
 /**
  * @swagger
- * /sesioncaja/{id}:
+ * /sesiones-caja/{id}:
  *   get:
  *     summary: Obtiene una sesión de caja por ID
  *     tags: [SesionCaja]
