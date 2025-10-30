@@ -1,153 +1,210 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  getVehiculos,
+  createVehiculo,
+  updateVehiculo,
+  deleteVehiculo,
+} from "../api/vehiculosApi";
+
+const estilos = {
+  contenedor: { fontFamily: "Segoe UI, Arial, sans-serif", background: "#2a333bff", padding: "20px" },
+  titulo: { fontSize: "1.3rem", color: "#fff", marginBottom: "0" },
+  botonSuperior: { border: "1px solid #38bdf8", color: "#38bdf8", background: "white", padding: "8px 14px", borderRadius: "6px", fontSize: "1rem", cursor: "pointer", float: "right" },
+  tablaTitulo: { fontSize: "1rem", fontWeight: "bold", marginTop: "30px", marginBottom: "12px", color: "#fff" },
+  tabla: { width: "100%", borderCollapse: "collapse", marginBottom: "16px", background: "#705b5bff", boxShadow: "0 2px 6px #5a4040ff" },
+  th: { background: "#4e3a3aff", color: "#fff", padding: "8px", border: "1px solid #e5e7eb", textAlign: "center" },
+  td: { padding: "8px", border: "1px solid #272c37ff", textAlign: "center", color: "#fff" },
+  input: { width: "160px", padding: "7px", borderRadius: "4px", border: "1px solid #e5e7eb", background: "#223446ff", color: "#fff" },
+  boton: { borderRadius: "6px", border: "1.5px solid #3b82f6", color: "#3b82f6", background: "#3c2d2dff", padding: "4px 14px", cursor: "pointer", marginRight: "6px" },
+  botonEditar: { borderRadius: "6px", border: "1.5px solid #38bdf8", color: "#38bdf8", background: "#673b3bff", padding: "4px 14px", cursor: "pointer" },
+  mensajeOk: { color: "#4ade80", margin: "8px 0" },
+  mensajeErr: { color: "#fb7185", margin: "8px 0" },
+  formCont: { display: "flex", flexWrap: "wrap", gap: "7px", margin: "16px 0", background: "#354758ff", padding: "10px", borderRadius: "6px" },
+};
 
 export default function Vehiculos() {
   const [vehiculos, setVehiculos] = useState([]);
-  const [form, setForm] = useState({
-    placa: "",
-    marca: "",
-    modelo: "",
-    color: "",
-    cliente: "",
-  });
   const [editId, setEditId] = useState(null);
-  const [search, setSearch] = useState("");
+  const [form, setForm] = useState({
+    vehiculo_tipo_id: "",
+    reserva_id: "",
+    placa: "",
+    color: "",
+  });
+  const [msgOk, setMsgOk] = useState("");
+  const [msgErr, setMsgErr] = useState("");
+  const [agregando, setAgregando] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.placa.trim() || !form.marca.trim()) return;
+  useEffect(() => {
+    cargarVehiculos();
+  }, []);
 
-    if (editId) {
-      setVehiculos(
-        vehiculos.map((v) =>
-          v.id === editId ? { ...v, ...form } : v
-        )
-      );
-      setEditId(null);
-    } else {
-      setVehiculos([
-        ...vehiculos,
-        { id: Date.now(), ...form },
-      ]);
+  const cargarVehiculos = async () => {
+    try {
+      const data = await getVehiculos();
+      setVehiculos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error al cargar vehículos:", error);
+      setMsgErr("Error al cargar vehículos.");
     }
-    setForm({ placa: "", marca: "", modelo: "", color: "", cliente: "" });
   };
 
-  const handleEdit = (id) => {
-    const vehiculo = vehiculos.find((v) => v.id === id);
-    setForm(vehiculo);
-    setEditId(id);
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsgOk("");
+    setMsgErr("");
+    try {
+      if (!form.vehiculo_tipo_id || !form.placa) {
+        return setMsgErr("Debe ingresar tipo de vehículo y placa.");
+      }
+
+      if (editId) {
+        await updateVehiculo(editId, form);
+        setMsgOk("Vehículo actualizado correctamente.");
+      } else {
+        await createVehiculo(form);
+        setMsgOk("Vehículo creado correctamente.");
+      }
+
+      setForm({ vehiculo_tipo_id: "", reserva_id: "", placa: "", color: "" });
+      setEditId(null);
+      setAgregando(false);
+      cargarVehiculos();
+    } catch (error) {
+      console.error("Error al guardar vehículo:", error);
+      setMsgErr("Error al guardar vehículo.");
+    }
   };
 
-  const handleDelete = (id) => {
-    setVehiculos(vehiculos.filter((v) => v.id !== id));
+  const handleEdit = (vehiculo) => {
+    setEditId(vehiculo.vehiculo_id);
+    setForm({
+      vehiculo_tipo_id: vehiculo.vehiculo_tipo_id || "",
+      reserva_id: vehiculo.reserva_id || "",
+      placa: vehiculo.placa || "",
+      color: vehiculo.color || "",
+    });
   };
 
-  const filteredVehiculos = vehiculos.filter(
-    (v) =>
-      v.placa.toLowerCase().includes(search.toLowerCase()) ||
-      v.marca.toLowerCase().includes(search.toLowerCase()) ||
-      v.modelo.toLowerCase().includes(search.toLowerCase()) ||
-      v.color.toLowerCase().includes(search.toLowerCase()) ||
-      v.cliente.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este vehículo?")) return;
+    try {
+      await deleteVehiculo(id);
+      setMsgOk("Vehículo eliminado.");
+      cargarVehiculos();
+    } catch (error) {
+      console.error("Error al eliminar vehículo:", error);
+      setMsgErr("Error al eliminar vehículo.");
+    }
+  };
 
   return (
-    <div>
-      <h1>Gestión de Vehículos</h1>
-      <p>Administra los vehículos de los clientes.</p>
+    <div style={estilos.contenedor}>
+      <h2 style={estilos.titulo}>Gestión de Vehículos</h2>
 
-      <form onSubmit={handleSubmit}>
-        <h2>{editId ? "Editar Vehículo" : "Registrar Vehículo"}</h2>
+      <button
+        style={estilos.botonSuperior}
+        onClick={() => {
+          setAgregando(!agregando);
+          setMsgOk("");
+          setMsgErr("");
+          setEditId(null);
+        }}
+      >
+        + Nuevo Vehículo
+      </button>
 
-        <input
-          type="text"
-          placeholder="Placa"
-          value={form.placa}
-          onChange={(e) => setForm({ ...form, placa: e.target.value })}
-          required
-        />
+      {msgOk && <div style={estilos.mensajeOk}>{msgOk}</div>}
+      {msgErr && <div style={estilos.mensajeErr}>{msgErr}</div>}
 
-        <input
-          type="text"
-          placeholder="Marca"
-          value={form.marca}
-          onChange={(e) => setForm({ ...form, marca: e.target.value })}
-          required
-        />
+      {agregando && (
+        <form style={estilos.formCont} onSubmit={handleSubmit}>
+          <input
+            name="vehiculo_tipo_id"
+            type="text"
+            value={form.vehiculo_tipo_id}
+            onChange={handleChange}
+            placeholder="Tipo vehículo (ID)"
+            style={estilos.input}
+          />
+          <input
+            name="reserva_id"
+            type="text"
+            value={form.reserva_id}
+            onChange={handleChange}
+            placeholder="Reserva (opcional)"
+            style={estilos.input}
+          />
+          <input
+            name="placa"
+            type="text"
+            value={form.placa}
+            onChange={handleChange}
+            placeholder="Placa"
+            style={estilos.input}
+          />
+          <input
+            name="color"
+            type="text"
+            value={form.color}
+            onChange={handleChange}
+            placeholder="Color"
+            style={estilos.input}
+          />
+          <button style={estilos.boton} type="submit">
+            {editId ? "Actualizar" : "Guardar"}
+          </button>
+          <button
+            style={estilos.botonEditar}
+            type="button"
+            onClick={() => setAgregando(false)}
+          >
+            Cancelar
+          </button>
+        </form>
+      )}
 
-        <input
-          type="text"
-          placeholder="Modelo"
-          value={form.modelo}
-          onChange={(e) => setForm({ ...form, modelo: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="Color"
-          value={form.color}
-          onChange={(e) => setForm({ ...form, color: e.target.value })}
-        />
-
-        <input
-          type="text"
-          placeholder="Cliente"
-          value={form.cliente}
-          onChange={(e) => setForm({ ...form, cliente: e.target.value })}
-        />
-
-        <button type="submit">{editId ? "Actualizar" : "Guardar"}</button>
-      </form>
-
-      <h2>Lista de Vehículos</h2>
-      <input
-        type="search"
-        placeholder="Buscar por placa, marca, cliente..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <table>
+      <div style={estilos.tablaTitulo}>Lista de Vehículos</div>
+      <table style={estilos.tabla}>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Placa</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Color</th>
-            <th>Cliente</th>
-            <th>Acciones</th>
+            <th style={estilos.th}>ID</th>
+            <th style={estilos.th}>Tipo Vehículo (ID)</th>
+            <th style={estilos.th}>Reserva</th>
+            <th style={estilos.th}>Placa</th>
+            <th style={estilos.th}>Color</th>
+            <th style={estilos.th}>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {filteredVehiculos.length > 0 ? (
-            filteredVehiculos.map((v) => (
-              <tr key={v.id}>
-                <td>{v.id}</td>
-                <td>{v.placa}</td>
-                <td>{v.marca}</td>
-                <td>{v.modelo}</td>
-                <td>{v.color}</td>
-                <td>{v.cliente}</td>
-                <td>
-                  <button
-                    onClick={() => handleEdit(v.id)}
-                    style={{ background: "#f59e0b" }}
-                  >
-                    Editar
+          {vehiculos.length > 0 ? (
+            vehiculos.map((v) => (
+              <tr key={v.vehiculo_id}>
+                <td style={estilos.td}>{v.vehiculo_id}</td>
+                <td style={estilos.td}>{v.vehiculo_tipo_id}</td>
+                <td style={estilos.td}>{v.reserva_id || "-"}</td>
+                <td style={estilos.td}>{v.placa}</td>
+                <td style={estilos.td}>{v.color}</td>
+                <td style={estilos.td}>
+                  <button style={estilos.boton} onClick={() => handleEdit(v)}>
+                    📝 Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(v.id)}
-                    style={{ background: "#dc2626", marginLeft: "0.5rem" }}
+                    style={estilos.botonEditar}
+                    onClick={() => handleDelete(v.vehiculo_id)}
                   >
-                    Eliminar
+                    🗑️ Eliminar
                   </button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="7">No hay vehículos registrados</td>
+              <td colSpan="6" style={estilos.td}>
+                No hay vehículos registrados.
+              </td>
             </tr>
           )}
         </tbody>

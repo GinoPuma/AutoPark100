@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getPagos, createPago, updatePago, deletePago } from "../api/pagosApi";
 
 export default function Pagos() {
   const [pagos, setPagos] = useState([]);
@@ -6,45 +7,54 @@ export default function Pagos() {
     ticket: "",
     monto: "",
     metodo: "Efectivo",
-    fecha: new Date().toISOString().slice(0, 16), 
+    fecha: new Date().toISOString().slice(0, 16),
   });
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    cargarPagos();
+  }, []);
+
+  const cargarPagos = async () => {
+    try {
+      const data = await getPagos();
+      setPagos(data);
+    } catch (error) {
+      console.error("Error al cargar pagos:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.ticket.trim() || !form.monto.trim()) return;
 
-    if (editId) {
-      setPagos(
-        pagos.map((p) =>
-          p.id === editId ? { ...p, ...form } : p
-        )
-      );
-      setEditId(null);
-    } else {
-      setPagos([
-        ...pagos,
-        { id: Date.now(), ...form },
-      ]);
+    try {
+      if (editId) {
+        await updatePago(editId, form);
+        setEditId(null);
+      } else {
+        await createPago(form);
+      }
+      setForm({ ticket: "", monto: "", metodo: "Efectivo", fecha: new Date().toISOString().slice(0, 16) });
+      cargarPagos();
+    } catch (error) {
+      console.error("Error al guardar pago:", error);
     }
-
-    setForm({
-      ticket: "",
-      monto: "",
-      metodo: "Efectivo",
-      fecha: new Date().toISOString().slice(0, 16),
-    });
   };
 
-  const handleEdit = (id) => {
-    const pago = pagos.find((p) => p.id === id);
+  const handleEdit = (pago) => {
     setForm(pago);
-    setEditId(id);
+    setEditId(pago.id);
   };
 
-  const handleDelete = (id) => {
-    setPagos(pagos.filter((p) => p.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deletePago(id);
+      cargarPagos();
+    } catch (error) {
+      console.error("Error al eliminar pago:", error);
+    }
   };
 
   const filteredPagos = pagos.filter(
@@ -127,7 +137,7 @@ export default function Pagos() {
                 <td>{new Date(p.fecha).toLocaleString()}</td>
                 <td>
                   <button
-                    onClick={() => handleEdit(p.id)}
+                    onClick={() => handleEdit(p)}
                     style={{ background: "#f59e0b" }}
                   >
                     Editar
