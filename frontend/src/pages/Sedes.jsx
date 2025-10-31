@@ -9,7 +9,6 @@ export default function Sedes() {
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
 
-  // --- Cargar datos ---
   useEffect(() => {
     fetchSedes();
     fetchEmpresas();
@@ -29,13 +28,13 @@ export default function Sedes() {
     try {
       const data = await getEmpresas();
       const lista = Array.isArray(data) ? data : data.empresas || [];
+      console.log("Empresas cargadas:", lista);
       setEmpresas(lista);
     } catch (error) {
       console.error("Error al obtener empresas:", error.response?.data || error);
     }
   };
 
-  // --- Crear o editar sede ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.empresa_id || !form.nombre.trim() || !form.direccion.trim()) {
@@ -57,12 +56,11 @@ export default function Sedes() {
     }
   };
 
-  // --- Editar sede ---
   const handleEdit = (id) => {
     const sede = sedes.find((s) => s.sede_id === id);
     if (sede) {
       setForm({
-        empresa_id: sede.empresa_id,
+        empresa_id: Number(sede.empresa_id),
         nombre: sede.nombre,
         direccion: sede.direccion,
       });
@@ -70,7 +68,6 @@ export default function Sedes() {
     }
   };
 
-  // --- Eliminar sede ---
   const handleDelete = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar esta sede?")) return;
     try {
@@ -81,7 +78,6 @@ export default function Sedes() {
     }
   };
 
-  // --- Filtrar sedes ---
   const filteredSedes = sedes.filter(
     (s) =>
       s.nombre?.toLowerCase().includes(search.toLowerCase()) ||
@@ -93,30 +89,42 @@ export default function Sedes() {
       <h1>Gestión de Sedes</h1>
       <p>Administra las sedes registradas en tu estacionamiento.</p>
 
-      {/* --- Formulario --- */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
         <h2>{editId ? "Editar Sede" : "Registrar Sede"}</h2>
 
-        {/* Selección de empresa */}
+        {/* ✅ Select Empresa */}
         <select
           value={form.empresa_id}
-          onChange={(e) => setForm({ ...form, empresa_id: e.target.value })}
+          onChange={(e) => setForm({ ...form, empresa_id: Number(e.target.value) })}
           required
+          style={{
+            padding: "8px",
+            width: "250px",
+            marginRight: "10px",
+            display: "inline-block",
+          }}
         >
           <option value="">Selecciona una empresa</option>
           {empresas.map((emp) => (
             <option key={emp.empresa_id} value={emp.empresa_id}>
-              {emp.nombre}
+              {emp.razon_social}
             </option>
           ))}
         </select>
 
+        {/* Inputs */}
         <input
           type="text"
           placeholder="Nombre de la sede"
           value={form.nombre}
           onChange={(e) => setForm({ ...form, nombre: e.target.value })}
           required
+          style={{
+            padding: "8px",
+            width: "200px",
+            marginRight: "10px",
+            display: "inline-block",
+          }}
         />
 
         <input
@@ -125,21 +133,28 @@ export default function Sedes() {
           value={form.direccion}
           onChange={(e) => setForm({ ...form, direccion: e.target.value })}
           required
+          style={{
+            padding: "8px",
+            width: "200px",
+            marginRight: "10px",
+            display: "inline-block",
+          }}
         />
 
-        <button type="submit">{editId ? "Actualizar" : "Guardar"}</button>
+        <button type="submit" style={{ padding: "8px 12px" }}>
+          {editId ? "Actualizar" : "Guardar"}
+        </button>
       </form>
 
-      {/* --- Búsqueda --- */}
       <h2>Lista de Sedes</h2>
       <input
         type="search"
         placeholder="Buscar por nombre o dirección"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        style={{ padding: "8px", width: "300px" }}
       />
 
-      {/* --- Tabla --- */}
       <table border="1" cellPadding="10" style={{ marginTop: "1rem", width: "100%" }}>
         <thead>
           <tr>
@@ -155,7 +170,14 @@ export default function Sedes() {
             filteredSedes.map((s) => (
               <tr key={s.sede_id}>
                 <td>{s.sede_id}</td>
-                <td>{s.Empresa?.nombre || empresas.find((e) => e.empresa_id === s.empresa_id)?.nombre || "Sin empresa"}</td>
+
+                {/* ✅ Mostrar empresa por razon_social */}
+                <td>
+                  {s.Empresa?.razon_social ??
+                    empresas.find((e) => Number(e.empresa_id) === Number(s.empresa_id))?.razon_social ??
+                    "Sin empresa"}
+                </td>
+
                 <td>{s.nombre}</td>
                 <td>{s.direccion}</td>
                 <td>

@@ -22,6 +22,8 @@ import TicketsAbiertos from "./pages/TicketsAbiertos";
 import TicketsCerrados from "./pages/TicketsCerrados";
 import Reportes from "./pages/Reportes";
 import Tarifas from "./pages/Tarifas";
+import MetodosPago from "./pages/MetodosPago";
+import VehiculoTipos from "./pages/VehiculoTipos"; // ✅ Importar
 
 function AppLayout() {
   const location = useLocation();
@@ -56,7 +58,8 @@ function AppLayout() {
             <Route path="/vehiculos" element={<Vehiculos />} />
             <Route path="/reportes" element={<Reportes />} />
             <Route path="/tarifas" element={<Tarifas />} />
-            <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
+            <Route path="/metodopagos" element={<MetodosPago />} />
+            <Route path="/vehiculo-tipos" element={<VehiculoTipos />} /> {/* ✅ Nueva ruta */}
           </Routes>
         </main>
       </div>

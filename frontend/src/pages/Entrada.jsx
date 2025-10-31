@@ -35,6 +35,7 @@ export default function Espacios() {
       } else {
         await createEspacio(form);
       }
+
       setForm({ sede: "", codigo: "", disponible: true });
       cargarEspacios();
     } catch (error) {
@@ -43,11 +44,16 @@ export default function Espacios() {
   };
 
   const handleEdit = (espacio) => {
-    setForm(espacio);
+    setForm({
+      sede: espacio.sede || "",
+      codigo: espacio.codigo || "",
+      disponible: espacio.disponible ?? true,
+    });
     setEditId(espacio.id);
   };
 
   const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este espacio?")) return;
     try {
       await deleteEspacio(id);
       cargarEspacios();
@@ -56,11 +62,14 @@ export default function Espacios() {
     }
   };
 
-  const filteredEspacios = espacios.filter(
-    (esp) =>
-      esp.codigo.toLowerCase().includes(search.toLowerCase()) ||
-      esp.sede.toLowerCase().includes(search.toLowerCase())
-  );
+  // ✅ Filtro seguro
+  const filteredEspacios = espacios.filter((esp) => {
+    const codigo = esp.codigo?.toLowerCase() || "";
+    const sede = esp.sede?.toLowerCase() || "";
+    const term = search.toLowerCase();
+
+    return codigo.includes(term) || sede.includes(term);
+  });
 
   return (
     <div>
@@ -133,7 +142,7 @@ export default function Espacios() {
                   </button>
                   <button
                     onClick={() => handleDelete(esp.id)}
-                    style={{ background: "#dc2626", marginLeft: "0.5rem" }}
+                    style={{ background: "#dc2626", marginLeft: "0.5rem", color: "#fff" }}
                   >
                     Eliminar
                   </button>

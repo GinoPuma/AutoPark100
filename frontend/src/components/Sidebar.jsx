@@ -4,8 +4,8 @@ import "./Sidebar.css";
 
 export default function Sidebar() {
   const navigate = useNavigate();
-  const [showConfig, setShowConfig] = useState(false); // Controla el submenú de Configuración
-  const [showInicio, setShowInicio] = useState(false); // Controla el submenú de Inicio
+  const [showConfig, setShowConfig] = useState(false);
+  const [showInicio, setShowInicio] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
@@ -29,6 +29,7 @@ export default function Sidebar() {
             >
               🏠 Inicio {showInicio ? "▲" : "▼"}
             </button>
+
             {showInicio && (
               <ul className="submenu-list">
                 <li>
@@ -38,25 +39,19 @@ export default function Sidebar() {
                   <Link to="/ticketsCerrados">🎟️ Tickets Cerrados</Link>
                 </li>
                 <li>
-                  <Link to="/reportes"> Reportes</Link>
+                  <Link to="/reportes">📊 Reportes</Link>
                 </li>
               </ul>
             )}
           </li>
-          <li>
-            <Link to="/vehiculos">🚘 Vehículos</Link>
-          </li>
-          <li>
-            <Link to="/espacios">🅿️ Espacios</Link>
-          </li>
-          <li>
-            <Link to="/pagos">💳 Pagos</Link>
-          </li>
-          <li>
-            <Link to="/entrada">🚪 Entrada</Link>
-          </li>
 
-          {/* 🔧 Sección de Configuración */}
+          <li><Link to="/vehiculos">🚘 Vehículos</Link></li>
+          <li><Link to="/espacios">🅿️ Espacios</Link></li>
+          <li><Link to="/pagos">💳 Pagos</Link></li>
+          <li><Link to="/metodopagos">💳 Métodos de Pago</Link></li>
+          <li><Link to="/entrada">🚪 Entrada</Link></li>
+
+          {/* 🔧 Configuración */}
           <li className="submenu">
             <button
               onClick={() => setShowConfig(!showConfig)}
@@ -64,23 +59,15 @@ export default function Sidebar() {
             >
               ⚙️ Configuración {showConfig ? "▲" : "▼"}
             </button>
+
             {showConfig && (
               <ul className="submenu-list">
-                <li>
-                  <Link to="/empresas">🏢 Empresas</Link>
-                </li>
-                <li>
-                  <Link to="/clientes">👥 Clientes</Link>
-                </li>
-                <li>
-                  <Link to="/tickets">🎟️ Tickets</Link>
-                </li>
-                <li>
-                  <Link to="/sedes">📍 Sedes</Link>
-                </li>
-                <li>
-                  <Link to="/tarifas">📍 Tarifas</Link>
-                </li>
+                <li><Link to="/empresas">🏢 Empresas</Link></li>
+                <li><Link to="/clientes">👥 Clientes</Link></li>
+                <li><Link to="/tickets">🎟️ Tickets</Link></li>
+                <li><Link to="/sedes">📍 Sedes</Link></li>
+                <li><Link to="/tarifas">💲 Tarifas</Link></li>
+                <li><Link to="/vehiculo-tipos">🚗 Tipos de Vehículos</Link></li>
               </ul>
             )}
           </li>
