@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 // Middleware para manejar los errores de validación
 const handleValidationErrors = (req, res, next) => {
@@ -11,13 +11,12 @@ const handleValidationErrors = (req, res, next) => {
 
 const validateEmpresa = [
   body('ruc')
-    .optional({ checkFalsy: true }) 
-    .isString().withMessage('El RUC debe ser un texto.')
-    .trim() 
-    .isLength({ min: 11, max: 20 }).withMessage('El RUC debe tener entre 11 y 20 caracteres.'), 
+    .exists({ checkFalsy: true }).withMessage('El RUC es obligatorio.')
+    .isLength({ min: 11, max: 11 }).withMessage('El RUC debe tener exactamente 11 dígitos.')
+    .matches(/^\d+$/).withMessage('El RUC solo puede contener números.'),
 
   body('razon_social')
-    .optional({ checkFalsy: true })
+    .exists({ checkFalsy: true }).withMessage('La razón social es obligatoria.')
     .isString().withMessage('La razón social debe ser un texto.')
     .trim()
     .isLength({ min: 1, max: 150 }).withMessage('La razón social debe tener entre 1 y 150 caracteres.'),
@@ -27,5 +26,5 @@ const validateEmpresa = [
 
 module.exports = {
   validateEmpresa,
-  handleValidationErrors 
+  handleValidationErrors
 };

@@ -29,21 +29,45 @@ export default function Empresas() {
   }, []);
 
   // --- Crear o actualizar empresa ---
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editId) {
-        await updateEmpresa(editId, form);
-      } else {
-        await createEmpresa(form);
-      }
-      setEditId(null);
-      setForm({ ruc: "", razon_social: "" });
-      cargarEmpresas();
-    } catch (error) {
-      console.error("Error guardando empresa:", error);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    let response;
+
+    if (editId) {
+      response = await fetch(`/api/empresas/${editId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+    } else {
+      response = await fetch(`/api/empresas`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
     }
-  };
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.log(result.errors); // <<< aquí llegan los mensajes del backend
+      alert(result.errors[0].msg); // mostrar el primer error al usuario
+      return;
+    }
+
+    alert(editId ? "Empresa actualizada" : "Empresa creada correctamente");
+
+    setEditId(null);
+    setForm({ ruc: "", razon_social: "" });
+    cargarEmpresas();
+
+  } catch (error) {
+    console.error("Error guardando empresa:", error);
+  }
+};
+
 
   const handleEdit = (empresa) => {
     setEditId(empresa.empresa_id);
