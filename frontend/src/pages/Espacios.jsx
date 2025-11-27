@@ -1,49 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Espacios() {
   const [espacios, setEspacios] = useState([]);
   const [form, setForm] = useState({
-    sede: "",
+    sede_id: "",
     codigo: "",
-    disponible: true,
+    estado: "disponible",
   });
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.sede.trim() || !form.codigo.trim()) return;
+  const API_URL = "http://localhost:3000/api/espacios";
 
-    if (editId) {
-      setEspacios(
-        espacios.map((esp) =>
-          esp.id === editId ? { ...esp, ...form } : esp
-        )
-      );
-      setEditId(null);
-    } else {
-      setEspacios([
-        ...espacios,
-        { id: Date.now(), ...form },
-      ]);
+  // --- Cargar espacios desde el backend ---
+  useEffect(() => {
+    cargarEspacios();
+  }, []);
+
+  const cargarEspacios = async () => {
+    try {
+      const res = await axios.get(API_URL, { withCredentials: true });
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data.espacios || [];
+      setEspacios(data);
+    } catch (error) {
+      console.error("Error al cargar espacios:", error.response?.data || error);
     }
-    setForm({ sede: "", codigo: "", disponible: true });
+  };
+
+  // --- Crear o actualizar un espacio ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.sede_id.trim() || !form.codigo.trim()) return;
+
+    try {
+      if (editId) {
+        // Actualizar espacio existente
+        await axios.put(`${API_URL}/${editId}`, form, { withCredentials: true });
+      } else {
+        // Crear nuevo espacio
+        await axios.post(API_URL, form, { withCredentials: true });
+      }
+
+      setForm({ sede_id: "", codigo: "", estado: "disponible" });
+      setEditId(null);
+      cargarEspacios();
+    } catch (error) {
+      console.error("Error al guardar espacio:", error.response?.data || error);
+    }
   };
 
   const handleEdit = (id) => {
-    const espacio = espacios.find((esp) => esp.id === id);
-    setForm(espacio);
-    setEditId(id);
+    const espacio = espacios.find((esp) => esp.espacio_id === id);
+    if (espacio) {
+      setForm({
+        sede_id: espacio.sede_id || "",
+        codigo: espacio.codigo || "",
+        estado: espacio.estado || "disponible",
+      });
+      setEditId(id);
+    }
   };
 
-  const handleDelete = (id) => {
-    setEspacios(espacios.filter((esp) => esp.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`, { withCredentials: true });
+      cargarEspacios();
+    } catch (error) {
+      console.error("Error al eliminar espacio:", error.response?.data || error);
+    }
   };
 
   const filteredEspacios = espacios.filter(
     (esp) =>
-      esp.codigo.toLowerCase().includes(search.toLowerCase()) ||
-      esp.sede.toLowerCase().includes(search.toLowerCase())
+      esp.codigo?.toLowerCase().includes(search.toLowerCase()) ||
+      String(esp.sede_id).includes(search)
   );
 
   return (
@@ -56,9 +89,9 @@ export default function Espacios() {
 
         <input
           type="text"
-          placeholder="Sede"
-          value={form.sede}
-          onChange={(e) => setForm({ ...form, sede: e.target.value })}
+          placeholder="ID de la Sede"
+          value={form.sede_id}
+          onChange={(e) => setForm({ ...form, sede_id: e.target.value })}
           required
         />
 
@@ -70,14 +103,14 @@ export default function Espacios() {
           required
         />
 
-        <label>
-          <input
-            type="checkbox"
-            checked={form.disponible}
-            onChange={(e) => setForm({ ...form, disponible: e.target.checked })}
-          />
-          Disponible
-        </label>
+        <select
+          value={form.estado}
+          onChange={(e) => setForm({ ...form, estado: e.target.value })}
+        >
+          <option value="disponible">Disponible</option>
+          <option value="ocupado">Ocupado</option>
+          <option value="mantenimiento">Mantenimiento</option>
+        </select>
 
         <button type="submit">{editId ? "Actualizar" : "Guardar"}</button>
       </form>
@@ -96,27 +129,27 @@ export default function Espacios() {
             <th>ID</th>
             <th>Sede</th>
             <th>Código</th>
-            <th>Disponible</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {filteredEspacios.length > 0 ? (
             filteredEspacios.map((esp) => (
-              <tr key={esp.id}>
-                <td>{esp.id}</td>
-                <td>{esp.sede}</td>
+              <tr key={esp.espacio_id}>
+                <td>{esp.espacio_id}</td>
+                <td>{esp.sede_id}</td>
                 <td>{esp.codigo}</td>
-                <td>{esp.disponible ? "✅ Sí" : "❌ No"}</td>
+                <td>{esp.estado}</td>
                 <td>
                   <button
-                    onClick={() => handleEdit(esp.id)}
+                    onClick={() => handleEdit(esp.espacio_id)}
                     style={{ background: "#f59e0b" }}
                   >
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(esp.id)}
+                    onClick={() => handleDelete(esp.espacio_id)}
                     style={{ background: "#dc2626", marginLeft: "0.5rem" }}
                   >
                     Eliminar

@@ -1,130 +1,116 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getEspacios, createEspacio, updateEspacio, deleteEspacio } from "../api/espaciosApi";
 
-export default function Entradas() {
-  const [entradas, setEntradas] = useState([]);
+export default function Espacios() {
+  const [espacios, setEspacios] = useState([]);
   const [form, setForm] = useState({
-    espacio: "",
-    vehiculo: "",
-    tarifa: "",
-    fechaEntrada: new Date().toISOString().slice(0, 16),
-    fechaSalida: "",
-    estado: "activo",
-    monto: "",
+    sede: "",
+    codigo: "",
+    disponible: true,
   });
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.espacio.trim() || !form.vehiculo.trim()) return;
+  useEffect(() => {
+    cargarEspacios();
+  }, []);
 
-    if (editId) {
-      setEntradas(
-        entradas.map((en) =>
-          en.id === editId ? { ...en, ...form } : en
-        )
-      );
-      setEditId(null);
-    } else {
-      setEntradas([
-        ...entradas,
-        { id: Date.now(), ...form },
-      ]);
+  const cargarEspacios = async () => {
+    try {
+      const data = await getEspacios();
+      setEspacios(data);
+    } catch (error) {
+      console.error("Error al cargar espacios:", error);
     }
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.sede.trim() || !form.codigo.trim()) return;
+
+    try {
+      if (editId) {
+        await updateEspacio(editId, form);
+        setEditId(null);
+      } else {
+        await createEspacio(form);
+      }
+
+      setForm({ sede: "", codigo: "", disponible: true });
+      cargarEspacios();
+    } catch (error) {
+      console.error("Error al guardar espacio:", error);
+    }
+  };
+
+  const handleEdit = (espacio) => {
     setForm({
-      espacio: "",
-      vehiculo: "",
-      tarifa: "",
-      fechaEntrada: new Date().toISOString().slice(0, 16),
-      fechaSalida: "",
-      estado: "activo",
-      monto: "",
+      sede: espacio.sede || "",
+      codigo: espacio.codigo || "",
+      disponible: espacio.disponible ?? true,
     });
+    setEditId(espacio.id);
   };
 
-  const handleEdit = (id) => {
-    const entrada = entradas.find((en) => en.id === id);
-    setForm(entrada);
-    setEditId(id);
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este espacio?")) return;
+    try {
+      await deleteEspacio(id);
+      cargarEspacios();
+    } catch (error) {
+      console.error("Error al eliminar espacio:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    setEntradas(entradas.filter((en) => en.id !== id));
-  };
+  // ✅ Filtro seguro
+  const filteredEspacios = espacios.filter((esp) => {
+    const codigo = esp.codigo?.toLowerCase() || "";
+    const sede = esp.sede?.toLowerCase() || "";
+    const term = search.toLowerCase();
 
-  const filteredEntradas = entradas.filter(
-    (en) =>
-      en.vehiculo.toLowerCase().includes(search.toLowerCase()) ||
-      en.estado.toLowerCase().includes(search.toLowerCase())
-  );
+    return codigo.includes(term) || sede.includes(term);
+  });
 
   return (
     <div>
-      <h1>Gestión de Entradas</h1>
-      <p>Registra y controla los tickets de ingreso al estacionamiento.</p>
+      <h1>Gestión de Espacios</h1>
+      <p>Administra los espacios de estacionamiento por sede.</p>
 
       <form onSubmit={handleSubmit}>
-        <h2>{editId ? "Editar Entrada" : "Registrar Entrada"}</h2>
+        <h2>{editId ? "Editar Espacio" : "Registrar Espacio"}</h2>
 
         <input
           type="text"
-          placeholder="ID Espacio"
-          value={form.espacio}
-          onChange={(e) => setForm({ ...form, espacio: e.target.value })}
+          placeholder="Sede"
+          value={form.sede}
+          onChange={(e) => setForm({ ...form, sede: e.target.value })}
           required
         />
 
         <input
           type="text"
-          placeholder="ID Vehículo / Placa"
-          value={form.vehiculo}
-          onChange={(e) => setForm({ ...form, vehiculo: e.target.value })}
+          placeholder="Código del Espacio"
+          value={form.codigo}
+          onChange={(e) => setForm({ ...form, codigo: e.target.value })}
           required
         />
 
-        <input
-          type="text"
-          placeholder="ID Tarifa"
-          value={form.tarifa}
-          onChange={(e) => setForm({ ...form, tarifa: e.target.value })}
-        />
-
-        <input
-          type="datetime-local"
-          value={form.fechaEntrada}
-          onChange={(e) => setForm({ ...form, fechaEntrada: e.target.value })}
-          required
-        />
-
-        <input
-          type="datetime-local"
-          value={form.fechaSalida}
-          onChange={(e) => setForm({ ...form, fechaSalida: e.target.value })}
-        />
-
-        <select
-          value={form.estado}
-          onChange={(e) => setForm({ ...form, estado: e.target.value })}
-        >
-          <option value="activo">Activo</option>
-          <option value="finalizado">Finalizado</option>
-        </select>
-
-        <input
-          type="number"
-          placeholder="Monto total (S/)"
-          value={form.monto}
-          onChange={(e) => setForm({ ...form, monto: e.target.value })}
-        />
+        <label>
+          <input
+            type="checkbox"
+            checked={form.disponible}
+            onChange={(e) => setForm({ ...form, disponible: e.target.checked })}
+          />
+          Disponible
+        </label>
 
         <button type="submit">{editId ? "Actualizar" : "Guardar"}</button>
       </form>
 
-      <h2>Lista de Entradas</h2>
+      <h2>Lista de Espacios</h2>
       <input
         type="search"
-        placeholder="Buscar por vehículo o estado..."
+        placeholder="Buscar por sede o código..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -133,38 +119,30 @@ export default function Entradas() {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Espacio</th>
-            <th>Vehículo</th>
-            <th>Tarifa</th>
-            <th>Fecha Entrada</th>
-            <th>Fecha Salida</th>
-            <th>Estado</th>
-            <th>Monto</th>
+            <th>Sede</th>
+            <th>Código</th>
+            <th>Disponible</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {filteredEntradas.length > 0 ? (
-            filteredEntradas.map((en) => (
-              <tr key={en.id}>
-                <td>{en.id}</td>
-                <td>{en.espacio}</td>
-                <td>{en.vehiculo}</td>
-                <td>{en.tarifa}</td>
-                <td>{new Date(en.fechaEntrada).toLocaleString()}</td>
-                <td>{en.fechaSalida ? new Date(en.fechaSalida).toLocaleString() : "-"}</td>
-                <td>{en.estado}</td>
-                <td>S/ {en.monto}</td>
+          {filteredEspacios.length > 0 ? (
+            filteredEspacios.map((esp) => (
+              <tr key={esp.id}>
+                <td>{esp.id}</td>
+                <td>{esp.sede}</td>
+                <td>{esp.codigo}</td>
+                <td>{esp.disponible ? "Sí" : "No"}</td>
                 <td>
                   <button
-                    onClick={() => handleEdit(en.id)}
+                    onClick={() => handleEdit(esp)}
                     style={{ background: "#f59e0b" }}
                   >
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(en.id)}
-                    style={{ background: "#dc2626", marginLeft: "0.5rem" }}
+                    onClick={() => handleDelete(esp.id)}
+                    style={{ background: "#dc2626", marginLeft: "0.5rem", color: "#fff" }}
                   >
                     Eliminar
                   </button>
@@ -173,7 +151,7 @@ export default function Entradas() {
             ))
           ) : (
             <tr>
-              <td colSpan="9">No hay entradas registradas</td>
+              <td colSpan="5">No hay espacios registrados</td>
             </tr>
           )}
         </tbody>
