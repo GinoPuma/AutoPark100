@@ -1,40 +1,45 @@
 const db = require("../models");
 
+// Crear tarifa
 exports.createTarifa = async (req, res) => {
   try {
-    const {
-      vehiculo_tipo_id,
-      precio_hora,
-      precio_dia,
-      precio_mes,
-      descripcion,
-    } = req.body;
+    const { vehiculo_tipo_id, tipo_tarifa, precio, descripcion } = req.body;
 
+    // Validación de tipo_tarifa
+    const tiposValidos = ["hora", "dia", "mes"];
+    if (!tiposValidos.includes(tipo_tarifa)) {
+      return res.status(400).json({
+        message: "tipo_tarifa inválido. Debe ser: hora, dia o mes",
+      });
+    }
+
+    // Verificar el tipo de vehículo
     const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
-
     if (!vehiculoTipo) {
       return res
         .status(404)
-        .json({ message: "Tipo de vehiculo no encontrado" });
+        .json({ message: "Tipo de vehículo no encontrado" });
     }
 
+    // Crear la tarifa
     const nuevaTarifa = await db.Tarifa.create({
       vehiculo_tipo_id,
-      precio_hora,
-      precio_dia,
-      precio_mes,
+      tipo_tarifa,
+      precio,
       descripcion,
     });
 
     res.status(201).json(nuevaTarifa);
   } catch (error) {
     console.error("Error al crear Tarifa", error);
-    res
-      .status(500)
-      .json({ message: "Error interno del servidor", error: error.message });
+    res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
   }
 };
 
+// Obtener todas las tarifas
 exports.getAllTarifas = async (req, res) => {
   try {
     const tarifas = await db.Tarifa.findAll();
@@ -47,6 +52,7 @@ exports.getAllTarifas = async (req, res) => {
   }
 };
 
+// Obtener tarifa por ID
 exports.getTarifaById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -58,55 +64,62 @@ exports.getTarifaById = async (req, res) => {
 
     res.status(200).json(tarifa);
   } catch (error) {
-    console.error("Error al obtener tarifa por ID", error);
+    console.error("Error al obtener tarifa", error);
     res
       .status(500)
       .json({ message: "Error interno del servidor", error: error.message });
   }
 };
 
+// Actualizar tarifa
 exports.updateTarifa = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      vehiculo_tipo_id,
-      precio_hora,
-      precio_dia,
-      precio_mes,
-      descripcion,
-    } = req.body;
+    const { vehiculo_tipo_id, tipo_tarifa, precio, descripcion } = req.body;
 
-    if (vehiculo_tipo_id !== undefined) {
-      const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
-      if (!vehiculoTipo) {
+    const tarifa = await db.Tarifa.findByPk(id);
+    if (!tarifa) {
+      return res.status(404).json({ message: "Tarifa no encontrada" });
+    }
+
+    // Validar tipo_tarifa si viene en el body
+    if (tipo_tarifa) {
+      const tiposValidos = ["hora", "dia", "mes"];
+      if (!tiposValidos.includes(tipo_tarifa)) {
+        return res.status(400).json({
+          message: "tipo_tarifa inválido. Debe ser: hora, dia o mes",
+        });
+      }
+      tarifa.tipo_tarifa = tipo_tarifa;
+    }
+
+    // Validar tipo de vehículo si viene en el body
+    if (vehiculo_tipo_id) {
+      const vt = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
+      if (!vt) {
         return res
           .status(404)
-          .json({ message: "Tipo de vehiculo no encontrado" });
+          .json({ message: "Tipo de vehículo no encontrado" });
       }
       tarifa.vehiculo_tipo_id = vehiculo_tipo_id;
     }
 
-    const tarifa = await db.Tarifa.findByPk(id);
-    if (!tarifa) {
-      return res.status(404).json({ message: "Tarifa no encontrado" });
-    }
-
-    tarifa.vehiculo_tipo_id = vehiculo_tipo_id || tarifa.vehiculo_tipo_id;
-    tarifa.precio_hora = precio_hora || tarifa.precio_hora;
-    tarifa.precio_dia = precio_dia || tarifa.precio_dia;
-    tarifa.precio_mes = precio_mes || tarifa.precio_mes;
-    tarifa.descripcion = descripcion || tarifa.descripcion;
+    // Actualizar precio y descripción si llegan
+    tarifa.precio = precio ?? tarifa.precio;
+    tarifa.descripcion = descripcion ?? tarifa.descripcion;
 
     await tarifa.save();
+
     res.status(200).json(tarifa);
   } catch (error) {
-    console.error("Error al Actualizar Tarifa", error);
+    console.error("Error al actualizar Tarifa", error);
     res
       .status(500)
       .json({ message: "Error interno del servidor", error: error.message });
   }
 };
 
+// Eliminar tarifa
 exports.deleteTarifa = async (req, res) => {
   try {
     const { id } = req.params;

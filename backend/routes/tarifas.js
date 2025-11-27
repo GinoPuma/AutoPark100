@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Tarifa
- *   description: Endpoints para la gestión de tarifas de vehículos
+ *   description: Endpoints para la gestión de tarifas de estacionamiento
  */
 
 /**
@@ -12,32 +12,28 @@
  *     Tarifa:
  *       type: object
  *       properties:
- *         id:
+ *         tarifa_id:
  *           type: integer
  *           example: 1
  *         vehiculo_tipo_id:
  *           type: integer
  *           example: 1
- *         precio_hora:
+ *         tipo_tarifa:
+ *           type: string
+ *           enum: [hora, dia, mes]
+ *           example: "hora"
+ *         precio:
  *           type: number
- *           example: 5.5
- *         precio_dia:
- *           type: number
- *           example: 40
- *         precio_mes:
- *           type: number
- *           example: 800
+ *           example: 5.50
  *         descripcion:
  *           type: string
- *           example: "Tarifa para autos pequeños"
+ *           example: "Tarifa estándar para autos"
  *         createdAt:
  *           type: string
  *           format: date-time
- *           example: "2025-10-23T15:00:00Z"
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           example: "2025-10-23T15:00:00Z"
  *
  *   securitySchemes:
  *     bearerAuth:
@@ -62,23 +58,22 @@
  *             type: object
  *             required:
  *               - vehiculo_tipo_id
- *               - precio_hora
+ *               - tipo_tarifa
+ *               - precio
  *             properties:
  *               vehiculo_tipo_id:
  *                 type: integer
  *                 example: 1
- *               precio_hora:
+ *               tipo_tarifa:
+ *                 type: string
+ *                 enum: [hora, dia, mes]
+ *                 example: "hora"
+ *               precio:
  *                 type: number
- *                 example: 5.5
- *               precio_dia:
- *                 type: number
- *                 example: 40
- *               precio_mes:
- *                 type: number
- *                 example: 800
+ *                 example: 5.50
  *               descripcion:
  *                 type: string
- *                 example: "Tarifa para autos pequeños"
+ *                 example: "Tarifa por hora para autos"
  *     responses:
  *       201:
  *         description: Tarifa creada correctamente
@@ -94,7 +89,7 @@
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de todas las tarifas
+ *         description: Lista de tarifas
  *       500:
  *         description: Error interno del servidor
  */
@@ -103,35 +98,33 @@
  * @swagger
  * /tarifas/{id}:
  *   get:
- *     summary: Obtiene una tarifa específica por su ID
+ *     summary: Obtiene una tarifa por su ID
  *     tags: [Tarifa]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         description: ID de la tarifa a consultar
  *         required: true
  *         schema:
  *           type: integer
  *           example: 1
  *     responses:
  *       200:
- *         description: Tarifa encontrada correctamente
+ *         description: Tarifa encontrada
  *       404:
  *         description: Tarifa no encontrada
  *       500:
  *         description: Error interno del servidor
  *
  *   put:
- *     summary: Actualiza una tarifa existente
+ *     summary: Actualiza una tarifa
  *     tags: [Tarifa]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         description: ID de la tarifa a actualizar
  *         required: true
  *         schema:
  *           type: integer
@@ -146,21 +139,19 @@
  *               vehiculo_tipo_id:
  *                 type: integer
  *                 example: 2
- *               precio_hora:
+ *               tipo_tarifa:
+ *                 type: string
+ *                 enum: [hora, dia, mes]
+ *                 example: "dia"
+ *               precio:
  *                 type: number
- *                 example: 6.0
- *               precio_dia:
- *                 type: number
- *                 example: 45
- *               precio_mes:
- *                 type: number
- *                 example: 900
+ *                 example: 30.00
  *               descripcion:
  *                 type: string
  *                 example: "Tarifa actualizada para camionetas"
  *     responses:
  *       200:
- *         description: Tarifa actualizada correctamente
+ *         description: Tarifa actualizada
  *       404:
  *         description: Tarifa o tipo de vehículo no encontrado
  *       500:
@@ -174,14 +165,13 @@
  *     parameters:
  *       - in: path
  *         name: id
- *         description: ID de la tarifa a eliminar
  *         required: true
  *         schema:
  *           type: integer
  *           example: 1
  *     responses:
  *       204:
- *         description: Tarifa eliminada correctamente (sin contenido)
+ *         description: Tarifa eliminada
  *       404:
  *         description: Tarifa no encontrada
  *       500:

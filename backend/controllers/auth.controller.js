@@ -64,7 +64,6 @@ exports.login = async (req, res) => {
     const { password: _, ...usuarioInfo } = usuario.get({ plain: true });
     res.status(200).json({
       message: "Inicio de sesión exitoso.",
-      user: usuarioInfo,
     });
   } catch (error) {
     console.error("Error en inicio de sesión:", error);
@@ -74,7 +73,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// --- Cierre de Sesión (Logout) ---
+// --- Cierre de Sesión ---
 exports.logout = async (req, res) => {
   try {
     jwtHelper.deleteCookieJWT(res);

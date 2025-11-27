@@ -4,16 +4,13 @@ exports.createVehiculo = async (req, res) => {
   try {
     const { vehiculo_tipo_id, reserva_id, placa, descripcion } = req.body;
     const vehiculoTipo = await db.VehiculoTipo.findByPk(vehiculo_tipo_id);
-    const reserva = await db.Reserva.findByPk(reserva_id);
+
     if (!vehiculoTipo) {
       return res
         .status(404)
         .json({ message: "Tipo de vehiculo no encontrado" });
     }
 
-    if (!reserva) {
-      return res.status(404).json({ message: "Reserva no encontrada" });
-    }
     const nuevoVehiculo = await db.Vehiculo.create({
       vehiculo_tipo_id,
       reserva_id,

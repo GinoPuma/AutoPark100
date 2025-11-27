@@ -1,13 +1,13 @@
-'use strict';
-/** @type {import('sequelize-cli').Migration} */
+"use strict";
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Tarifas', {
+    await queryInterface.createTable("Tarifas", {
       tarifa_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       vehiculo_tipo_id: {
         type: Sequelize.INTEGER,
@@ -19,29 +19,36 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      precio_hora: {
-        type: Sequelize.DECIMAL(10, 2)
+
+      tipo_tarifa: {
+        type: Sequelize.ENUM("hora", "dia", "mes"),
+        allowNull: false,
       },
-      precio_dia: {
-        type: Sequelize.DECIMAL(10, 2)
+
+      precio: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
       },
-      precio_mes: {
-        type: Sequelize.DECIMAL(10, 2)
-      },
+
       descripcion: {
-        type: Sequelize.STRING(150)
+        type: Sequelize.STRING(150),
+        allowNull: true,
       },
+
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Tarifas');
-  }
+    await queryInterface.dropTable("Tarifas");
+  },
 };
