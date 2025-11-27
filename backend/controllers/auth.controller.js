@@ -42,34 +42,53 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Encontrar al usuario por username
+    // Buscar usuario
     const usuario = await db.Usuario.findOne({
-      where: { username: username },
+      where: { username },
       include: [
         { model: db.Empresa, attributes: ["empresa_id", "razon_social"] },
         { model: db.Rol, attributes: ["rol_id", "nombre"] },
       ],
     });
 
+    // Validar si existe
+    if (!usuario) {
+      return res.status(404).json({
+        message: "Usuario no encontrado.",
+      });
+    }
+
+    // Validar estado
     if (usuario.estado !== "activo") {
       return res.status(403).json({
         message: "Tu cuenta no está activa. Contacta al administrador.",
       });
     }
 
-    // Generar token JWT y enviarlo como cookie
+    // Validar contraseña
+    const passwordValida = await bcrypt.compare(password, usuario.password);
+    if (!passwordValida) {
+      return res.status(401).json({
+        message: "Contraseña incorrecta.",
+      });
+    }
+
+    // Generar token JWT
     jwtHelper.signToken(usuario.usuario_id, res);
 
-    // Responder con información del usuario (sin contraseña)
+    // Retornar información del usuario
     const { password: _, ...usuarioInfo } = usuario.get({ plain: true });
+
     res.status(200).json({
       message: "Inicio de sesión exitoso.",
+      user: usuarioInfo,
     });
   } catch (error) {
     console.error("Error en inicio de sesión:", error);
-    res
-      .status(500)
-      .json({ message: "Error interno del servidor", error: error.message });
+    res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
   }
 };
 
