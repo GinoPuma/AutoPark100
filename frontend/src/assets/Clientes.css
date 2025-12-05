@@ -1,0 +1,130 @@
+/* clientes.css */
+
+/* Contenedor general */
+div {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Títulos */
+h1 {
+  color: #1f2937;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  color: #1f2937;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Formulario */
+form {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Inputs y select */
+input[type="text"],
+input[type="email"],
+input[type="search"],
+select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="search"]:focus,
+select:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+/* Botones */
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+button[type="submit"] {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+button[type="submit"]:hover {
+  background-color: #1d4ed8;
+}
+
+/* Editar y eliminar */
+button.edit {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
+button.edit:hover {
+  background-color: #d97706;
+}
+
+button.delete {
+  background-color: #dc2626;
+  color: #fff;
+  margin-left: 0.5rem;
+}
+
+button.delete:hover {
+  background-color: #b91c1c;
+}
+
+/* Buscador */
+input[type="search"] {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 1rem;
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #e5e7eb;
+}
+
+thead th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+tbody td {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Mensaje de vacío */
+tbody td[colspan] {
+  padding: 1rem;
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+}

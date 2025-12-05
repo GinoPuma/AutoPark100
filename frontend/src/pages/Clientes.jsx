@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  getClientes,
+  createCliente,
+  updateCliente,
+  deleteCliente,
+} from "../api/clientesApi";
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
   const [form, setForm] = useState({
+    empresa_id: 1,
     doc_tipo: "DNI",
     doc_num: "",
     nombre: "",
@@ -13,56 +20,76 @@ export default function Clientes() {
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    cargarClientes();
+  }, []);
+
+  const cargarClientes = async () => {
+    try {
+      const data = await getClientes();
+      setClientes(data);
+    } catch (error) {
+      console.error(" Error al cargar clientes:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.doc_num.trim() || !form.nombre.trim()) return;
 
-    if (editId) {
-      setClientes(
-        clientes.map((c) =>
-          c.id === editId ? { ...c, ...form } : c
-        )
-      );
+    try {
+      if (editId) {
+        await updateCliente(editId, form);
+      } else {
+        await createCliente(form);
+      }
+      setForm({
+        empresa_id: 1,
+        doc_tipo: "DNI",
+        doc_num: "",
+        nombre: "",
+        apellido: "",
+        email: "",
+        telefono: "",
+      });
       setEditId(null);
-    } else {
-      setClientes([
-        ...clientes,
-        { id: Date.now(), ...form },
-      ]);
+      cargarClientes();
+    } catch (error) {
+      alert(" Error al guardar el cliente");
     }
-    setForm({
-      doc_tipo: "DNI",
-      doc_num: "",
-      nombre: "",
-      apellido: "",
-      email: "",
-      telefono: "",
-    });
   };
 
   const handleEdit = (id) => {
-    const cliente = clientes.find((c) => c.id === id);
-    setForm(cliente);
+    const cliente = clientes.find((c) => c.cliente_id === id);
+    if (!cliente) return;
+    setForm({ ...cliente });
     setEditId(id);
   };
 
-  const handleDelete = (id) => {
-    setClientes(clientes.filter((c) => c.id !== id));
+  const handleDelete = async (id) => {
+    if (confirm("¿Seguro que deseas eliminar este cliente?")) {
+      try {
+        await deleteCliente(id);
+        cargarClientes();
+      } catch (error) {
+        alert(" Error al eliminar el cliente");
+      }
+    }
   };
 
   const filteredClientes = clientes.filter(
     (c) =>
-      c.doc_num.toLowerCase().includes(search.toLowerCase()) ||
-      c.nombre.toLowerCase().includes(search.toLowerCase()) ||
-      c.apellido.toLowerCase().includes(search.toLowerCase())
+      (c.doc_num || "").toLowerCase().includes(search.toLowerCase()) ||
+      (c.nombre || "").toLowerCase().includes(search.toLowerCase()) ||
+      (c.apellido || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div>
+    <div style={{ padding: "1.5rem" }}>
       <h1>Gestión de Clientes</h1>
       <p>Administra los clientes de tu estacionamiento.</p>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ marginBottom: "1.5rem" }}>
         <h2>{editId ? "Editar Cliente" : "Registrar Cliente"}</h2>
 
         <select
@@ -77,7 +104,7 @@ export default function Clientes() {
         <input
           type="text"
           placeholder="Número de documento"
-          value={form.doc_num}
+          value={form.doc_num || ""}
           onChange={(e) => setForm({ ...form, doc_num: e.target.value })}
           required
         />
@@ -85,7 +112,7 @@ export default function Clientes() {
         <input
           type="text"
           placeholder="Nombre"
-          value={form.nombre}
+          value={form.nombre || ""}
           onChange={(e) => setForm({ ...form, nombre: e.target.value })}
           required
         />
@@ -93,21 +120,21 @@ export default function Clientes() {
         <input
           type="text"
           placeholder="Apellido"
-          value={form.apellido}
+          value={form.apellido || ""}
           onChange={(e) => setForm({ ...form, apellido: e.target.value })}
         />
 
         <input
           type="email"
           placeholder="Correo electrónico"
-          value={form.email}
+          value={form.email || ""}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
 
         <input
           type="text"
           placeholder="Teléfono"
-          value={form.telefono}
+          value={form.telefono || ""}
           onChange={(e) => setForm({ ...form, telefono: e.target.value })}
         />
 
@@ -120,9 +147,14 @@ export default function Clientes() {
         placeholder="Buscar por nombre, apellido o documento"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        style={{ marginBottom: "1rem", width: "100%", padding: "0.5rem" }}
       />
 
-      <table>
+      <table
+        border="1"
+        cellPadding="8"
+        style={{ marginTop: "1rem", width: "100%" }}
+      >
         <thead>
           <tr>
             <th>ID</th>
@@ -138,8 +170,8 @@ export default function Clientes() {
         <tbody>
           {filteredClientes.length > 0 ? (
             filteredClientes.map((c) => (
-              <tr key={c.id}>
-                <td>{c.id}</td>
+              <tr key={c.cliente_id}>
+                <td>{c.cliente_id}</td>
                 <td>{c.doc_tipo}</td>
                 <td>{c.doc_num}</td>
                 <td>{c.nombre}</td>
@@ -148,14 +180,18 @@ export default function Clientes() {
                 <td>{c.telefono}</td>
                 <td>
                   <button
-                    onClick={() => handleEdit(c.id)}
-                    style={{ background: "#f59e0b" }}
+                    onClick={() => handleEdit(c.cliente_id)}
+                    style={{ background: "#f59e0b", color: "#fff" }}
                   >
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(c.id)}
-                    style={{ background: "#dc2626", marginLeft: "0.5rem" }}
+                    onClick={() => handleDelete(c.cliente_id)}
+                    style={{
+                      background: "#dc2626",
+                      color: "#fff",
+                      marginLeft: "0.5rem",
+                    }}
                   >
                     Eliminar
                   </button>
@@ -164,7 +200,9 @@ export default function Clientes() {
             ))
           ) : (
             <tr>
-              <td colSpan="8">No hay clientes registrados</td>
+              <td colSpan="8" style={{ textAlign: "center" }}>
+                No hay clientes registrados
+              </td>
             </tr>
           )}
         </tbody>

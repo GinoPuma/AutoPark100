@@ -1,210 +1,214 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function Tickets() {
-  const [tickets, setTickets] = useState([]);
-  const [form, setForm] = useState({
-    espacio: "",
-    vehiculo: "",
-    tarifa: "",
-    fechaEntrada: new Date().toISOString().slice(0, 16),
-    fechaSalida: "",
-    estado: "activo",
-    monto: "",
+export default function Tarifas() {
+  const [tipoVehiculo, setTipoVehiculo] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [formModal, setFormModal] = useState({
+    placa: "",
+    descripcion: "",
   });
-  const [editId, setEditId] = useState(null);
-  const [search, setSearch] = useState("");
+  const [tickets, setTickets] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const tipos = [
+    { key: 1, label: "Carro" },
+    { key: 2, label: "Moto" },
+    { key: 3, label: "Camioneta" },
+  ];
 
-    if (!form.espacio.trim() || !form.vehiculo.trim()) return;
+  const API_TICKETS = "http://localhost:3000/api/tickets";
 
-    if (editId) {
-      setTickets(
-        tickets.map((t) =>
-          t.id === editId ? { ...t, ...form } : t
-        )
-      );
-      setEditId(null);
-    } else {
-      setTickets([
-        ...tickets,
-        { id: Date.now(), ...form },
-      ]);
+  // --- Cargar datos al montar ---
+  useEffect(() => {
+    cargarTickets();
+  }, []);
+
+  // --- Cargar Tickets ---
+  const cargarTickets = async () => {
+    try {
+      const res = await axios.get(API_TICKETS, { withCredentials: true });
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data.tickets || [];
+      setTickets(data);
+    } catch (error) {
+      console.error("Error al cargar tickets:", error.response?.data || error);
+    }
+  };
+
+  const handleSelectTipo = (tipo) => {
+    setTipoVehiculo(tipo);
+    setFormModal({ placa: "", descripcion: "" });
+    setShowModal(true);
+  };
+
+  // --- Crear nuevo Ticket ---
+  const handleSaveModal = async () => {
+    if (!formModal.placa || !formModal.descripcion) {
+      alert("Completa todos los campos antes de continuar.");
+      return;
     }
 
-    setForm({
-      espacio: "",
-      vehiculo: "",
-      tarifa: "",
-      fechaEntrada: new Date().toISOString().slice(0, 16),
-      fechaSalida: "",
-      estado: "activo",
-      monto: "",
-    });
-  };
+    try {
+      await axios.post(
+        API_TICKETS,
+        {
+          espacio_id: 1, // valor fijo o dinámico según tu lógica
+          vehiculo_id: 1,
+          tarifa_id: 1, // valor temporal, ya que eliminamos el select
+          fecha_entrada: new Date(),
+          estado: "activo",
+          monto_total: 0,
+        },
+        { withCredentials: true }
+      );
 
-  const handleEdit = (id) => {
-    const ticket = tickets.find((t) => t.id === id);
-    setForm(ticket);
-    setEditId(id);
+      setShowModal(false);
+      setTipoVehiculo(null);
+      cargarTickets();
+    } catch (error) {
+      console.error("Error al guardar ticket:", error.response?.data || error);
+    }
   };
-
-  const handleDelete = (id) => {
-    setTickets(tickets.filter((t) => t.id !== id));
-  };
-
-  const handleClose = (id) => {
-    setTickets(
-      tickets.map((t) =>
-        t.id === id
-          ? {
-              ...t,
-              estado: "cerrado",
-              fechaSalida: new Date().toISOString().slice(0, 16),
-            }
-          : t
-      )
-    );
-  };
-
-  const filteredTickets = tickets.filter(
-    (t) =>
-      t.vehiculo.toLowerCase().includes(search.toLowerCase()) ||
-      t.estado.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
-    <div>
-      <h1>Gestión de Tickets</h1>
-      <p>Controla los tickets de ingreso y salida del estacionamiento.</p>
+    <div style={{ padding: "1rem" }}>
+      <h1>Ingreso por Hora</h1>
 
-      <form onSubmit={handleSubmit}>
-        <h2>{editId ? "Editar Ticket" : "Nuevo Ticket"}</h2>
-
-        <input
-          type="text"
-          placeholder="ID Espacio"
-          value={form.espacio}
-          onChange={(e) => setForm({ ...form, espacio: e.target.value })}
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="Vehículo / Placa"
-          value={form.vehiculo}
-          onChange={(e) => setForm({ ...form, vehiculo: e.target.value })}
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="Tarifa"
-          value={form.tarifa}
-          onChange={(e) => setForm({ ...form, tarifa: e.target.value })}
-        />
-
-        <input
-          type="datetime-local"
-          value={form.fechaEntrada}
-          onChange={(e) => setForm({ ...form, fechaEntrada: e.target.value })}
-          required
-        />
-
-        <input
-          type="datetime-local"
-          value={form.fechaSalida}
-          onChange={(e) => setForm({ ...form, fechaSalida: e.target.value })}
-        />
-
-        <select
-          value={form.estado}
-          onChange={(e) => setForm({ ...form, estado: e.target.value })}
+      <h2>Tickets Registrados</h2>
+      {tickets.length === 0 ? (
+        <p>No hay tickets registrados</p>
+      ) : (
+        <table
+          border="1"
+          cellPadding="10"
+          style={{ marginBottom: "2rem", width: "100%" }}
         >
-          <option value="activo">Activo</option>
-          <option value="cerrado">Cerrado</option>
-        </select>
-
-        <input
-          type="number"
-          placeholder="Monto total (S/)"
-          value={form.monto}
-          onChange={(e) => setForm({ ...form, monto: e.target.value })}
-        />
-
-        <button type="submit">{editId ? "Actualizar" : "Guardar"}</button>
-      </form>
-
-      <h2>Lista de Tickets</h2>
-      <input
-        type="search"
-        placeholder="Buscar por vehículo o estado..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Espacio</th>
-            <th>Vehículo</th>
-            <th>Tarifa</th>
-            <th>Entrada</th>
-            <th>Salida</th>
-            <th>Estado</th>
-            <th>Monto</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredTickets.length > 0 ? (
-            filteredTickets.map((t) => (
-              <tr key={t.id}>
-                <td>{t.id}</td>
-                <td>{t.espacio}</td>
-                <td>{t.vehiculo}</td>
-                <td>{t.tarifa}</td>
-                <td>{new Date(t.fechaEntrada).toLocaleString()}</td>
-                <td>
-                  {t.fechaSalida
-                    ? new Date(t.fechaSalida).toLocaleString()
-                    : "-"}
-                </td>
-                <td>{t.estado}</td>
-                <td>S/ {t.monto}</td>
-                <td>
-                  {t.estado === "activo" && (
-                    <button
-                      onClick={() => handleClose(t.id)}
-                      style={{ background: "#10b981", marginRight: "0.5rem" }}
-                    >
-                      Cerrar
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleEdit(t.id)}
-                    style={{ background: "#f59e0b", marginRight: "0.5rem" }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(t.id)}
-                    style={{ background: "#dc2626" }}
-                  >
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+          <thead>
             <tr>
-              <td colSpan="9">No hay tickets registrados</td>
+              <th>ID</th>
+              <th>Tarifa</th>
+              <th>Estado</th>
+              <th>Fecha Entrada</th>
+              <th>Monto Total</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tickets.map((t) => (
+              <tr key={t.ticket_id}>
+                <td>{t.ticket_id}</td>
+                <td>{t.tarifa_id}</td>
+                <td>{t.estado}</td>
+                <td>{new Date(t.fecha_entrada).toLocaleString()}</td>
+                <td>S/ {t.monto_total}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
+        {tipos.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => handleSelectTipo(t.key)}
+            style={{ padding: "1rem 2rem", cursor: "pointer" }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "#352c2cff",
+              padding: "2rem",
+              borderRadius: "8px",
+              minWidth: "300px",
+            }}
+          >
+            <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>
+              Ingreso por Hora
+            </h2>
+            <p
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+                marginBottom: "1rem",
+              }}
+            >
+              {tipos.find((t) => t.key === tipoVehiculo)?.label}
+            </p>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Matrícula
+              </label>
+              <input
+                type="text"
+                placeholder="Matrícula"
+                value={formModal.placa}
+                onChange={(e) =>
+                  setFormModal({ ...formModal, placa: e.target.value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Descripción
+              </label>
+              <input
+                type="text"
+                placeholder="Descripción"
+                value={formModal.descripcion}
+                onChange={(e) =>
+                  setFormModal({ ...formModal, descripcion: e.target.value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "1rem",
+              }}
+            >
+              <button onClick={() => setShowModal(false)}>Cancelar</button>
+              <button onClick={handleSaveModal}>Ingresar por Hora</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
