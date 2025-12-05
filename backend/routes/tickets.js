@@ -33,16 +33,9 @@
  *                 type: string
  *                 format: date-time
  *                 example: "2025-10-23T09:00:00Z"
- *               fecha_salida:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-10-23T12:00:00Z"
  *               estado:
  *                 type: string
  *                 example: "activo"
- *               monto_total:
- *                 type: number
- *                 example: 15.5
  *     responses:
  *       201:
  *         description: Ticket creado correctamente
@@ -147,6 +140,53 @@
  *         description: Error interno del servidor
  */
 
+/**
+ * @swagger
+ * /tickets/{id}/cerrar:
+ *   post:
+ *     summary: Cierra un ticket y calcula el monto total
+ *     description: Calcula la tarifa según el tipo (hora, día o mes), registra la fecha de salida y cambia el estado del ticket a "cerrado"
+ *     tags: [Ticket]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Ticket cerrado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ticketId:
+ *                   type: integer
+ *                   example: 12
+ *                 entrada:
+ *                   type: string
+ *                   format: date-time
+ *                 salida:
+ *                   type: string
+ *                   format: date-time
+ *                 tipo:
+ *                   type: string
+ *                   example: "HORA"
+ *                 precio:
+ *                   type: number
+ *                   example: 5
+ *                 total:
+ *                   type: number
+ *                   example: 15
+ *       404:
+ *         description: Ticket no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
 const express = require("express");
 const router = express.Router();
 const ticketController = require("../controllers/ticket.controller");
@@ -157,5 +197,6 @@ router.get("/", protect, ticketController.getAllTickets);
 router.get("/:id", protect, ticketController.getTicketById);
 router.put("/:id", protect, ticketController.updateTicket);
 router.delete("/:id", protect, ticketController.deleteTicket);
+router.post("/:id/cerrar", protect, ticketController.cerrarTicket);
 
 module.exports = router;

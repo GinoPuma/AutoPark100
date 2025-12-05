@@ -1,3 +1,5 @@
+const { cerrarTicket } = require("../services/ticket.service");
+
 const db = require("../models");
 
 exports.createTicket = async (req, res) => {
@@ -123,6 +125,20 @@ exports.deleteTicket = async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error(error);
+    res
+      .status(500)
+      .json({ message: "Error interno del servidor", error: error.message });
+  }
+};
+
+exports.cerrarTicket = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await cerrarTicket(id);
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error al cerrar tarifa", error);
     res
       .status(500)
       .json({ message: "Error interno del servidor", error: error.message });
